@@ -21,12 +21,14 @@ namespace ScriptBuilderUtil.GUI {
             TextBox resultTextBox,
             ListBox additionalInjectionsList,
             ComboBox compression,
-            Label compressionDescription) {
+            Label compressionDescription,
+            CheckBox includeCommentsCheck) {
             return Instance ?? (Instance = new ViewModel(
                 resultTextBox, 
                 additionalInjectionsList, 
                 compression, 
-                compressionDescription
+                compressionDescription,
+                includeCommentsCheck
                 ));
         }
 
@@ -39,6 +41,18 @@ namespace ScriptBuilderUtil.GUI {
         public readonly ListBox AdditionalInjectionsList;
         public readonly ComboBox CompressionComboBox;
         public readonly Label CompressionDescriptionLabel;
+        public readonly CheckBox IncludeCommentsCheck;
+
+        public bool IsScriptTextEmpty;
+        public string ScriptText {
+            get {
+                return ResultField.Text; // TODO чистить текст от \r ?
+            }
+            set {
+                IsScriptTextEmpty = string.IsNullOrWhiteSpace(value);
+                ResultField.Text = value;
+            }
+        }
 
         #endregion Properties
 
@@ -46,23 +60,25 @@ namespace ScriptBuilderUtil.GUI {
             TextBox resultTextBox,
             ListBox additionalInjectionsList,
             ComboBox compression,
-            Label compressionDescription) {
+            Label compressionDescription,
+            CheckBox includeCommentsCheck) {
             RM = new ResourceManager("ScriptBuilderUtil.Properties.Resources", System.Reflection.Assembly.GetExecutingAssembly());
             ScriptBuilder = ScriptBuilderModel.GetInstance();
 
             ResultField = resultTextBox;
             AdditionalInjectionsList = additionalInjectionsList;
             CompressionComboBox = compression;
-            CompressionDescriptionLabel = compressionDescription;            
+            CompressionDescriptionLabel = compressionDescription;
+            IncludeCommentsCheck = includeCommentsCheck;
         }
 
         #region Methods
 
         public void Close(object sender, CancelEventArgs e) {
-            // TODO спрашивать хотим ли сохранить параметры если менялись
             string error;
             if (!ScriptBuilder.SaveParams(out error)) {
-                switch (MessageBox.Show($"Parameters have been not saved. Do you want stay in application?\n{error}", "Saving error", MessageBoxButton.YesNo)) {
+                Oink();
+                switch(Oink(MessageBoxButton.YesNo, "ErrorSavingCaption", "ErrorSaving", error)) {
                     case MessageBoxResult.Yes:
                         e.Cancel |= true;
                         break;
@@ -82,62 +98,79 @@ namespace ScriptBuilderUtil.GUI {
                 ScriptBuilder.RemAdditional(i);
         }
         public void CompressionChanged() {
+            string desc = "CompressinDescription";
             switch (CompressionComboBox.SelectedIndex) {
-                case (int)BuilderParamsModel.Compressions.Common:
-                    CompressionDescriptionLabel.Content = "TODO 3212354";//RM.GetString("");
+                case (int)BuilderParamsModel.Compressions.Build:
+                    desc += "Build";
+                    IncludeCommentsCheck.IsEnabled = true;
+                    break;
+                case (int)BuilderParamsModel.Compressions.Light:
+                    desc += "Light";
+                    IncludeCommentsCheck.IsEnabled = true;
+                    break;
+                case (int)BuilderParamsModel.Compressions.Hard:
+                    desc += "Hard";
+                    IncludeCommentsCheck.IsEnabled = false;
                     break;
                 default:
-                    Oink($"{RM.GetString("ErrorUnexpectedComboBoxItem")}\n#217: Compression combo box.");
-                    break;
+                    Oink("ErrorUnexpectedComboBoxItem");
+                    CompressionComboBox.SelectedIndex = (int)BuilderParamsModel.Compressions.Build;
+                    goto case (int)BuilderParamsModel.Compressions.Build;
             }
+            CompressionDescriptionLabel.Content = RM.GetString(desc);
         }
         public void CopyResult() {
-            if (!string.IsNullOrEmpty(ResultField.Text)) {
-                Clipboard.SetText(ResultField.Text);
-                System.Media.SystemSounds.Asterisk.Play();
+            if (!IsScriptTextEmpty) {
+                Clipboard.SetText(ScriptText);
+                Asterisk();
             } else {
                 Oink();
             }
         }
         public void SaveResultFile() {
-            if (!string.IsNullOrEmpty(ResultField.Text)) {
+            if (!IsScriptTextEmpty) {
                 FileInfo info = FilesManager.SaveFile(BuilderParamsModel.CONST.TXT_FILE_FILTER);
                 if (info != null) {
-                    FilesManager.WriteFile(info, false, ResultField.Text);
+                    FilesManager.WriteFile(info, false, ScriptText);
                 }
             } else {
                 Oink();
             }
         }
         public void ClearResult() {
+            //IsScriptTextEmpty = true;
             ResultField.Clear();
         }
-        public void Run() {
+        public void Build() {
             string result;
             string error;
-            switch (CompressionComboBox.SelectedIndex) {
-                case ((int)BuilderParamsModel.Compressions.Common):
-                    if (!string.IsNullOrEmpty(result = Builder.BuildScript(ScriptBuilder.BuilderParams, out error))) {
-                        //result = result.Replace("\r", "");
-                        ResultField.Text = result;
-                        MessageBox.Show($"TODO count: {result.Length} {result.Contains("\r")}");
-                    } else {
-                        Oink(error);
-                    }
-                    break;
-                case ((int)BuilderParamsModel.Compressions.Maximum):
-                    Oink("Maximum not implemented");
-                    break;
-                default:
-                    throw new ArgumentException($"Unexpected selected compression type: {CompressionComboBox.SelectedItem}");
+            string[] errorArgs;
+
+            result = Builder.BuildScript(ScriptBuilder.BuilderParams, out error, out errorArgs);
+            if (!string.IsNullOrWhiteSpace(result) && string.IsNullOrWhiteSpace(error)) {
+                ScriptText = result;
+            } else {
+                Oink(error, errorArgs);
             }
         }
 
-        public static void Oink(string errorMessage = null) {
+        public string TryGetResource(string resouceName) {
+            string resource = RM.GetString(resouceName);
+            return string.IsNullOrWhiteSpace(resource) ? resouceName : resource;
+        }
+        public void Asterisk() {
+            System.Media.SystemSounds.Asterisk.Play();
+        }
+        public void Oink(string errorMessage = null, params string[] errorArgs) {
+            Oink(MessageBoxButton.OK, null, errorMessage, errorArgs);
+        }
+        public MessageBoxResult Oink(MessageBoxButton type, string caption, string errorMessage, params string[] errorArgs) {
             System.Media.SystemSounds.Hand.Play();
             if (!string.IsNullOrWhiteSpace(errorMessage)) {
-                MessageBox.Show(errorMessage, Instance.RM.GetString("Error"));
+                caption = string.IsNullOrWhiteSpace(caption) ? RM.GetString("ErrorLabel") : TryGetResource(caption);
+                return MessageBox.Show(string.Format(errorMessage, errorArgs), caption, type);
             }
+            return MessageBoxResult.None;
         }
 
         #endregion Methods

@@ -25,7 +25,8 @@ namespace ScriptBuilderUtil.GUI {
                 ResultViewer,
                 AdditionalInjectionsList,
                 CompressionList,
-                CompressionDescriptionField);
+                CompressionDescriptionField,
+                IncludeCommentsLabelCheck);
         }
 
         #region Events
@@ -33,8 +34,8 @@ namespace ScriptBuilderUtil.GUI {
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             ViewModel.Instance.Close(sender, e);
         }
-        private void RunButton_Click(object sender, RoutedEventArgs e) {
-            ViewModel.Instance.Run();
+        private void BuildButton_Click(object sender, RoutedEventArgs e) {
+            ViewModel.Instance.Build();
         }
         private void RootDirectorySelection_Click(object sender, RoutedEventArgs e) {
             ViewModel.Instance.ChooseRootFile();

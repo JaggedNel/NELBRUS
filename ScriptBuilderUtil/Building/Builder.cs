@@ -9,10 +9,11 @@ using ScriptBuilderUtil.Models;
 namespace ScriptBuilderUtil.Building {
     public static class Builder {
 
-        public static string BuildScript(BuilderParamsModel param, out string error) {
+        public static string BuildScript(BuilderParamsModel param, out string error, out string[] errorArgs) {
             StringBuilder result = new StringBuilder();
             List<FileInfo> injections = param.AdditionsCollection
                 .Select(m => new FileInfo(m.Path)).ToList();
+            errorArgs = null;
             
             // Process root file and injections
             if (!BuildScriptFile(

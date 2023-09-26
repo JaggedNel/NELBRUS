@@ -58,10 +58,14 @@ namespace ScriptBuilderUtil.GUI {
 
         /// <returns> True if params are fine </returns>
         public bool SaveParams(out string error) {
-            Exception exception1, exception2;
-            MySerializer.SerializeObject(UtilSettings, UtilSettingsModel.CONST.SETTINGS_FILE_PATH, out exception1);
-            MySerializer.SerializeObject(BuilderParams, UtilSettings.ParamsFilePath, out exception2);
-            error = string.Join("\n", (new Exception[] { exception1, exception2 }).Where(e => e != null));
+            Exception exception;
+            error = "";
+            MySerializer.SerializeObject(UtilSettings, UtilSettingsModel.CONST.SETTINGS_FILE_PATH, out exception);
+            if (exception != null)
+                error += "\n" + exception.Message;
+            MySerializer.SerializeObject(BuilderParams, UtilSettings.ParamsFilePath, out exception);
+            if (exception != null)
+                error += "\n" + exception.Message;
 
             return string.IsNullOrEmpty(error);
         }
@@ -81,9 +85,6 @@ namespace ScriptBuilderUtil.GUI {
         }
         public void RemAdditional(int removingId) {
             BuilderParams.AdditionsCollection.RemoveAt(removingId);
-        }
-        public void Run() {
-
         }
 
         #endregion Methods

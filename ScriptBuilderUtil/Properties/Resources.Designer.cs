@@ -61,88 +61,124 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About program.
+        ///   Looks up a localized string similar to Build.
         /// </summary>
-        public static string AboutProgramMenu {
+        public static string ButtonBuild {
             get {
-                return ResourceManager.GetString("AboutProgramMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Additional injections:.
-        /// </summary>
-        public static string AdditionalInjectionsLabel {
-            get {
-                return ResourceManager.GetString("AdditionalInjectionsLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add tags to result.
-        /// </summary>
-        public static string AddTagsToResultLabel {
-            get {
-                return ResourceManager.GetString("AddTagsToResultLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Common.
-        /// </summary>
-        public static string CommonItem {
-            get {
-                return ResourceManager.GetString("CommonItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Compression:.
-        /// </summary>
-        public static string CompressionLabel {
-            get {
-                return ResourceManager.GetString("CompressionLabel", resourceCulture);
+                return ResourceManager.GetString("ButtonBuild", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
-        public static string CopyButton {
+        public static string ButtonCopy {
             get {
-                return ResourceManager.GetString("CopyButton", resourceCulture);
+                return ResourceManager.GetString("ButtonCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ButtonSave {
+            get {
+                return ResourceManager.GetString("ButtonSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string CompressinDescriptionBuild {
+            get {
+                return ResourceManager.GetString("CompressinDescriptionBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string CompressinDescriptionHard {
+            get {
+                return ResourceManager.GetString("CompressinDescriptionHard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string CompressinDescriptionLight {
+            get {
+                return ResourceManager.GetString("CompressinDescriptionLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string CompressinDescriptionMaximum {
+            get {
+                return ResourceManager.GetString("CompressinDescriptionMaximum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only build.
+        /// </summary>
+        public static string CompressionBuildItem {
+            get {
+                return ResourceManager.GetString("CompressionBuildItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hard.
+        /// </summary>
+        public static string CompressionHardItem {
+            get {
+                return ResourceManager.GetString("CompressionHardItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        public static string CompressionLightItem {
+            get {
+                return ResourceManager.GetString("CompressionLightItem", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string Error {
+        public static string ErrorLabel {
             get {
-                return ResourceManager.GetString("Error", resourceCulture);
+                return ResourceManager.GetString("ErrorLabel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Result field empty!.
+        ///   Looks up a localized string similar to Parameters have been not saved. Do you want stay in application?{0}.
         /// </summary>
-        public static string ErrorEmptyResultField {
+        public static string ErrorSaving {
             get {
-                return ResourceManager.GetString("ErrorEmptyResultField", resourceCulture);
+                return ResourceManager.GetString("ErrorSaving", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Standard settings loaded..
+        ///   Looks up a localized string similar to Error on saving settings.
         /// </summary>
-        public static string ErrorSettingsFileNotFound {
+        public static string ErrorSavingCaption {
             get {
-                return ResourceManager.GetString("ErrorSettingsFileNotFound", resourceCulture);
+                return ResourceManager.GetString("ErrorSavingCaption", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected item in combobox..
+        ///   Looks up a localized string similar to Unexpected type of build..
         /// </summary>
         public static string ErrorUnexpectedComboBoxItem {
             get {
@@ -151,137 +187,146 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Help.
+        ///   Looks up a localized string similar to Additional injections:.
         /// </summary>
-        public static string HelpMenu {
+        public static string LabelAdditionalInjections {
             get {
-                return ResourceManager.GetString("HelpMenu", resourceCulture);
+                return ResourceManager.GetString("LabelAdditionalInjections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add tags to result.
+        /// </summary>
+        public static string LabelAddTagsToResult {
+            get {
+                return ResourceManager.GetString("LabelAddTagsToResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compression:.
+        /// </summary>
+        public static string LabelCompression {
+            get {
+                return ResourceManager.GetString("LabelCompression", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Include comments.
         /// </summary>
-        public static string IncludeCommentsLabel {
+        public static string LabelIncludeComments {
             get {
-                return ResourceManager.GetString("IncludeCommentsLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Injection parameters.
-        /// </summary>
-        public static string InjectionParametersGroup {
-            get {
-                return ResourceManager.GetString("InjectionParametersGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Injection site:.
-        /// </summary>
-        public static string InjectionSiteLabel {
-            get {
-                return ResourceManager.GetString("InjectionSiteLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Instructions.
-        /// </summary>
-        public static string InstructionsMenu {
-            get {
-                return ResourceManager.GetString("InstructionsMenu", resourceCulture);
+                return ResourceManager.GetString("LabelIncludeComments", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Length:.
         /// </summary>
-        public static string LengthLabel {
+        public static string LabelLength {
             get {
-                return ResourceManager.GetString("LengthLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Maximum.
-        /// </summary>
-        public static string MaximumItem {
-            get {
-                return ResourceManager.GetString("MaximumItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Navigation tags.
-        /// </summary>
-        public static string NavigationTagsGroup {
-            get {
-                return ResourceManager.GetString("NavigationTagsGroup", resourceCulture);
+                return ResourceManager.GetString("LabelLength", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Root file:.
         /// </summary>
-        public static string RootFileLabel {
+        public static string LabelRootFile {
             get {
-                return ResourceManager.GetString("RootFileLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Run.
-        /// </summary>
-        public static string RunButtom {
-            get {
-                return ResourceManager.GetString("RunButtom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save.
-        /// </summary>
-        public static string SaveButton {
-            get {
-                return ResourceManager.GetString("SaveButton", resourceCulture);
+                return ResourceManager.GetString("LabelRootFile", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Save first root comment.
         /// </summary>
-        public static string SaveFirstMainCommentLabel {
+        public static string LabelSaveFirstMainComment {
             get {
-                return ResourceManager.GetString("SaveFirstMainCommentLabel", resourceCulture);
+                return ResourceManager.GetString("LabelSaveFirstMainComment", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Script beginning:.
+        ///   Looks up a localized string similar to About program.
         /// </summary>
-        public static string ScriptBeginningLabel {
+        public static string MenuAboutProgram {
             get {
-                return ResourceManager.GetString("ScriptBeginningLabel", resourceCulture);
+                return ResourceManager.GetString("MenuAboutProgram", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Script ending:.
+        ///   Looks up a localized string similar to Help.
         /// </summary>
-        public static string ScriptEndingLabel {
+        public static string MenuHelp {
             get {
-                return ResourceManager.GetString("ScriptEndingLabel", resourceCulture);
+                return ResourceManager.GetString("MenuHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instructions.
+        /// </summary>
+        public static string MenuInstructions {
+            get {
+                return ResourceManager.GetString("MenuInstructions", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to View.
         /// </summary>
-        public static string ViewMenu {
+        public static string MenuView {
             get {
-                return ResourceManager.GetString("ViewMenu", resourceCulture);
+                return ResourceManager.GetString("MenuView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Injection parameters.
+        /// </summary>
+        public static string TabInjectionParameters {
+            get {
+                return ResourceManager.GetString("TabInjectionParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navigation tags.
+        /// </summary>
+        public static string TabTagNavigation {
+            get {
+                return ResourceManager.GetString("TabTagNavigation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Injection tag:.
+        /// </summary>
+        public static string TagInjectionLabel {
+            get {
+                return ResourceManager.GetString("TagInjectionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Script beginning:.
+        /// </summary>
+        public static string TagScriptBeginningLabel {
+            get {
+                return ResourceManager.GetString("TagScriptBeginningLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Script ending:.
+        /// </summary>
+        public static string TagScriptEndingLabel {
+            get {
+                return ResourceManager.GetString("TagScriptEndingLabel", resourceCulture);
             }
         }
     }

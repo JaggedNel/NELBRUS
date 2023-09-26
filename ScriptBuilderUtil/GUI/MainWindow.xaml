@@ -21,12 +21,12 @@
     </Window.Resources>
     <DockPanel>
         <Menu Height="18" DockPanel.Dock="Top">
-            <MenuItem Header="{x:Static res:Resources.ViewMenu}">
+            <MenuItem Header="{x:Static res:Resources.MenuView}">
 
             </MenuItem>
-            <MenuItem Header="{x:Static res:Resources.HelpMenu}">
-                <MenuItem Header="{x:Static res:Resources.InstructionsMenu}"/>
-                <MenuItem Header="{x:Static res:Resources.AboutProgramMenu}"/>
+            <MenuItem Header="{x:Static res:Resources.MenuHelp}">
+                <MenuItem Header="{x:Static res:Resources.MenuInstructions}"/>
+                <MenuItem Header="{x:Static res:Resources.MenuAboutProgram}"/>
             </MenuItem>
         </Menu>
         <Grid Margin="10">
@@ -47,12 +47,12 @@
                     <RowDefinition Height="27px"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Label Content="{x:Static res:Resources.RootFileLabel}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <Label Content="{x:Static res:Resources.LabelRootFile}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 <DockPanel Grid.Column="1" Grid.ColumnSpan="2">
                     <Button x:Name="RootDirectorySelection" Content="···" Width="30" VerticalAlignment="Center" DockPanel.Dock="Right" Click="RootDirectorySelection_Click"/>
                     <TextBox x:Name="RootDirectoryField" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=RootDirectoryPath}" VerticalAlignment="Center" Background="#FFF1F1F1" Height="{Binding ActualHeight, ElementName=RootDirectorySelection, Mode=OneWay}"/>
                 </DockPanel>
-                <Label Content="{x:Static res:Resources.AdditionalInjectionsLabel}" HorizontalAlignment="Right" Grid.Row="1"/>
+                <Label Content="{x:Static res:Resources.LabelAdditionalInjections}" HorizontalAlignment="Right" Grid.Row="1"/>
                 <Border Grid.Column="1" Grid.Row="1" BorderBrush="#FFABADB3" BorderThickness="1">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <ListBox x:Name="AdditionalInjectionsList" DataContext="{Binding ScriptBuilder.BuilderParams}" ItemsSource="{Binding Path=AdditionsCollection}" SelectionMode="Multiple">
@@ -87,12 +87,12 @@
                     <ColumnDefinition Width="170"/>
                 </Grid.ColumnDefinitions>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <TextBox x:Name="ResultViewer" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=ResultText}" AcceptsReturn="True" AcceptsTab="True" MaxLength="100000"/>
+                    <TextBox x:Name="ResultViewer" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=ResultText}" AcceptsReturn="True" AcceptsTab="True" MaxLength="999999"/>
                 </ScrollViewer>
                 <StackPanel Grid.Column="1">
-                    <Button x:Name="RunButton" Content="{x:Static res:Resources.RunButtom}" Margin="10,2,10,2" Padding="20,0,20,0" Click="RunButton_Click" Height="20"/>
-                    <Button x:Name="CopyButton" Content="{x:Static res:Resources.CopyButton}" Margin="10,2,10,2" Padding="20,0,20,0" Click="CopyButton_Click" Height="20"/>
-                    <Button x:Name="SaveButton" Content="{x:Static res:Resources.SaveButton}" Margin="10,2,10,2" Padding="20,0,20,0" Click="SaveButton_Click" Height="20"/>
+                    <Button x:Name="BuildButton" Content="{x:Static res:Resources.ButtonBuild}" Margin="10,2,10,2" Padding="20,0,20,0" Click="BuildButton_Click" Height="20"/>
+                    <Button x:Name="CopyButton" Content="{x:Static res:Resources.ButtonCopy}" Margin="10,2,10,2" Padding="20,0,20,0" Click="CopyButton_Click" Height="20"/>
+                    <Button x:Name="SaveButton" Content="{x:Static res:Resources.ButtonSave}" Margin="10,2,10,2" Padding="20,0,20,0" Click="SaveButton_Click" Height="20"/>
                     <Grid Margin="10,2,10,2" Height="20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20"/>
@@ -100,10 +100,10 @@
                         </Grid.ColumnDefinitions>
                         <Button x:Name="ClearButton" Content="🗑️" Click="ClearButton_Click" HorizontalAlignment="Left"/>
                         <Button Grid.Column="1" Margin="-1,0,0,0" IsHitTestVisible="False"/>
-                        <Label Content="{x:Static res:Resources.LengthLabel}" VerticalAlignment="Center" Margin="5,0,0,0" Padding="0,-5,0,-5" Grid.Column="1"/>
+                        <Label Content="{x:Static res:Resources.LabelLength}" VerticalAlignment="Center" Margin="5,0,0,0" Padding="0,-5,0,-5" Grid.Column="1"/>
                         <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1">
-                            <TextBlock Text="{Binding Text.Length, ElementName=ResultViewer, Mode=OneWay}" Padding="0,0,4,0"/>
-                            <Label Content="/10.000" FontSize="9" Padding="0,0,5,1" VerticalAlignment="Bottom"/>
+                            <TextBlock Text="{Binding Text.Length, ElementName=ResultViewer, Mode=OneWay, StringFormat={}{0,7:N0}}" Padding="0,0,1,0"/>
+                            <Label Content="/100.000" FontSize="9" Padding="0,0,5,1" VerticalAlignment="Bottom"/>
                         </WrapPanel>
                         
                     </Grid>
@@ -119,7 +119,7 @@
             </GridSplitter>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
                 <TabControl>
-                    <TabItem Header="{x:Static res:Resources.NavigationTagsGroup}" Padding="10,0">
+                    <TabItem Header="{x:Static res:Resources.TabTagNavigation}" Padding="10,0">
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="182"/>
@@ -131,17 +131,18 @@
                                 <RowDefinition Height="27"/>
                                 <RowDefinition Height="27"/>
                             </Grid.RowDefinitions>
-                            <Label Content="{x:Static res:Resources.ScriptBeginningLabel}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Content="{x:Static res:Resources.TagScriptBeginningLabel}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <TextBox x:Name="ScriptBeginningField" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=ScriptBeginningTag}" Grid.Column="1" VerticalAlignment="Center" Background="#FFF1F1F1"/>
-                            <Label Content="{x:Static res:Resources.ScriptEndingLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="{x:Static res:Resources.TagScriptEndingLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1"/>
                             <TextBox x:Name="ScriptEndingField" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=ScriptEndingTag}" Grid.Column="1" VerticalAlignment="Center" Background="#FFF1F1F1" Grid.Row="1"/>
-                            <Label Content="{x:Static res:Resources.InjectionSiteLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2"/>
-                            <TextBox x:Name="InjectionSiteField" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=InjectionTag}" Grid.Column="1" VerticalAlignment="Center" Background="#FFF1F1F1" Grid.Row="2"/>
-                            <Label Content="{x:Static res:Resources.AddTagsToResultLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3"/>
-                            <CheckBox x:Name="AddTagsToResultCheck" DataContext="{Binding ScriptBuilder.BuilderParams}" IsChecked="{Binding Path=AddTagsToRes}" Grid.Column="1" VerticalAlignment="Center" Grid.Row="3"/>
+                            <Label Content="{x:Static res:Resources.TagInjectionLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2"/>
+                            <TextBox x:Name="InjectionTagField" DataContext="{Binding ScriptBuilder.BuilderParams}" Text="{Binding Path=InjectionTag}" Grid.Column="1" VerticalAlignment="Center" Background="#FFF1F1F1" Grid.Row="2"/>
+                            <!--TODO hiden-->
+                            <Label Content="{x:Static res:Resources.LabelAddTagsToResult}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Visibility="Hidden"/>
+                            <CheckBox x:Name="AddTagsToResultCheck" DataContext="{Binding ScriptBuilder.BuilderParams}" IsChecked="{Binding Path=AddTagsToRes}" Grid.Column="1" VerticalAlignment="Center" Grid.Row="3" Visibility="Hidden"/>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="{x:Static res:Resources.InjectionParametersGroup}" Padding="10,0">
+                    <TabItem Header="{x:Static res:Resources.TabInjectionParameters}" Padding="10,0">
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="182"/>
@@ -154,14 +155,15 @@
                                 <RowDefinition Height="27"/>
                                 <RowDefinition Height="27"/>
                             </Grid.RowDefinitions>
-                            <Label Content="{x:Static res:Resources.CompressionLabel}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Content="{x:Static res:Resources.LabelCompression}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <ComboBox Name="CompressionList" DataContext="{Binding ScriptBuilder.BuilderParams}" SelectedIndex="{Binding Path=Compression}" Grid.Column="1" VerticalAlignment="Center" SelectionChanged="CompressionList_SelectionChanged">
-                                <ComboBoxItem Content="{x:Static res:Resources.CommonItem}"/>
-                                <ComboBoxItem Content="{x:Static res:Resources.MaximumItem}"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.CompressionBuildItem}"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.CompressionLightItem}"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.CompressionHardItem}"/>
                             </ComboBox>
-                            <Label Content="{x:Static res:Resources.IncludeCommentsLabel}" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Content="{x:Static res:Resources.LabelIncludeComments}" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <CheckBox x:Name="IncludeCommentsLabelCheck" DataContext="{Binding ScriptBuilder.BuilderParams}" IsChecked="{Binding Path=IncludeComments}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" />
-                            <Label Content="{x:Static res:Resources.SaveFirstMainCommentLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2"/>
+                            <Label Content="{x:Static res:Resources.LabelSaveFirstMainComment}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2"/>
                             <CheckBox x:Name="IncludeFirstMainCommentCheck" DataContext="{Binding ScriptBuilder.BuilderParams}" IsChecked="{Binding Path=IncludeFirstMainComment}" Grid.Column="1" VerticalAlignment="Center" Grid.Row="2"/>
                             <Label Name="CompressionDescriptionField" Grid.Column="3" Grid.RowSpan="3"/>
                         </Grid>

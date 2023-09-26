@@ -11,8 +11,9 @@ namespace ScriptBuilderUtil.Models {
     public class BuilderParamsModel : Notified {
 
         public enum Compressions {
-            Common,
-            Maximum
+            Build,
+            Light,
+            Hard,
         }
 
         public static class CONST {
