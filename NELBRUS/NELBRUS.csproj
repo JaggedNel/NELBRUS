@@ -74,15 +74,21 @@
     <Compile Include="Core\6%29SdSubPCmd.cs" />
     <Compile Include="Core\5%29SdSubP.cs" />
     <Compile Include="Core\EchoController.cs" />
-    <Compile Include="Core\InWork\Test.cs" />
     <Compile Include="Core\SEcho.cs" />
     <Compile Include="Core\Ind.cs" />
     <Compile Include="Core\NLB.cs" />
     <Compile Include="Core\.Main.cs" />
     <Compile Include="Core\!New.cs" />
+    <Compile Include="Explore\Explore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subprograms\!New.cs" />
     <Compile Include="Subprograms\JNDalnoboy.cs" />
+    <Compile Include="Subprograms\JNKontur.cs" />
+    <Compile Include="Subprograms\JNMaximus.cs" />
+    <Compile Include="Subprograms\JNMGS.cs" />
+    <Compile Include="Subprograms\JNSolarTracker.cs" />
+    <Compile Include="Subprograms\JNTicker.cs" />
+    <Compile Include="Subprograms\JNTimer.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
