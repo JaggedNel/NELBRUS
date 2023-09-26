@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NELBRUS", "NELBRUS\NELBRUS.csproj", "{7C226647-6762-46C6-91EB-6312C53F4EA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptBuilderUtil", "ScriptBuilderUtil\ScriptBuilderUtil.csproj", "{5741A96A-284A-4E38-8E03-4EC219C8DF27}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C226647-6762-46C6-91EB-6312C53F4EA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C226647-6762-46C6-91EB-6312C53F4EA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C226647-6762-46C6-91EB-6312C53F4EA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {339BB563-F681-4AC5-AF39-2C1BFD3406D1}
+	EndGlobalSection
+EndGlobal
