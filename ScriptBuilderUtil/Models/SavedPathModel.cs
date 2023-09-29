@@ -9,8 +9,15 @@ namespace ScriptBuilderUtil.Models {
 
     public class SavedPathModel : Notified {
 
+        bool _choosen;
+        public bool Choosen {
+            get => _choosen;
+            set {
+                _choosen = value;
+                OnPropertyChanged("Choosen");
+            }
+        }
         string _path;
-
         public string Path {
             get => _path;
             set {

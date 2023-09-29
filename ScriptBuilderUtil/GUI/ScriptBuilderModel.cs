@@ -56,6 +56,9 @@ namespace ScriptBuilderUtil.GUI {
 
         #region Methods
 
+        public void ResetTags() {
+            BuilderParams.ResetTags();
+        }
         /// <returns> True if params are fine </returns>
         public bool SaveParams(out string error) {
             Exception exception;

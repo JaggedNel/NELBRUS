@@ -22,13 +22,15 @@ namespace ScriptBuilderUtil.GUI {
             ListBox additionalInjectionsList,
             ComboBox compression,
             Label compressionDescription,
-            CheckBox includeCommentsCheck) {
+            CheckBox includeCommentsCheck,
+            Label resultLengthLabel) {
             return Instance ?? (Instance = new ViewModel(
                 resultTextBox, 
                 additionalInjectionsList, 
                 compression, 
                 compressionDescription,
-                includeCommentsCheck
+                includeCommentsCheck,
+                resultLengthLabel
                 ));
         }
 
@@ -42,14 +44,16 @@ namespace ScriptBuilderUtil.GUI {
         public readonly ComboBox CompressionComboBox;
         public readonly Label CompressionDescriptionLabel;
         public readonly CheckBox IncludeCommentsCheck;
+        public readonly Label ResultLengthLabel;
 
-        public bool IsScriptTextEmpty;
+        public bool IsScriptTextEmpty {
+            get => string.IsNullOrWhiteSpace(ResultField.Text);
+        }
         public string ScriptText {
             get {
-                return ResultField.Text; // TODO чистить текст от \r ?
+                return ResultField.Text.Replace("\r", "");
             }
             set {
-                IsScriptTextEmpty = string.IsNullOrWhiteSpace(value);
                 ResultField.Text = value;
             }
         }
@@ -61,7 +65,8 @@ namespace ScriptBuilderUtil.GUI {
             ListBox additionalInjectionsList,
             ComboBox compression,
             Label compressionDescription,
-            CheckBox includeCommentsCheck) {
+            CheckBox includeCommentsCheck,
+            Label resultLengthLabel) {
             RM = new ResourceManager("ScriptBuilderUtil.Properties.Resources", System.Reflection.Assembly.GetExecutingAssembly());
             ScriptBuilder = ScriptBuilderModel.GetInstance();
 
@@ -70,9 +75,16 @@ namespace ScriptBuilderUtil.GUI {
             CompressionComboBox = compression;
             CompressionDescriptionLabel = compressionDescription;
             IncludeCommentsCheck = includeCommentsCheck;
+            ResultLengthLabel = resultLengthLabel;
+
+            ResultField.TextChanged += ResultField_TextChanged;
         }
 
         #region Methods
+
+        private void ResultField_TextChanged(object sender, TextChangedEventArgs e) {
+            ResultLengthLabel.Content = ScriptText.Length.ToString("N0");
+        }
 
         public void Close(object sender, CancelEventArgs e) {
             string error;
@@ -111,6 +123,7 @@ namespace ScriptBuilderUtil.GUI {
                 case (int)BuilderParamsModel.Compressions.Hard:
                     desc += "Hard";
                     IncludeCommentsCheck.IsEnabled = false;
+                    IncludeCommentsCheck.IsChecked = false;
                     break;
                 default:
                     Oink("ErrorUnexpectedComboBoxItem");
@@ -118,6 +131,9 @@ namespace ScriptBuilderUtil.GUI {
                     goto case (int)BuilderParamsModel.Compressions.Build;
             }
             CompressionDescriptionLabel.Content = RM.GetString(desc);
+        }
+        public void ResetTags() {
+            ScriptBuilder.ResetTags();
         }
         public void CopyResult() {
             if (!IsScriptTextEmpty) {
@@ -138,7 +154,6 @@ namespace ScriptBuilderUtil.GUI {
             }
         }
         public void ClearResult() {
-            //IsScriptTextEmpty = true;
             ResultField.Clear();
         }
         public void Build() {
@@ -168,6 +183,8 @@ namespace ScriptBuilderUtil.GUI {
             System.Media.SystemSounds.Hand.Play();
             if (!string.IsNullOrWhiteSpace(errorMessage)) {
                 caption = string.IsNullOrWhiteSpace(caption) ? RM.GetString("ErrorLabel") : TryGetResource(caption);
+                string errorRes = RM.GetString(errorMessage);
+                errorMessage = string.IsNullOrWhiteSpace(errorRes) ? errorMessage : errorRes;
                 return MessageBox.Show(string.Format(errorMessage, errorArgs), caption, type);
             }
             return MessageBoxResult.None;

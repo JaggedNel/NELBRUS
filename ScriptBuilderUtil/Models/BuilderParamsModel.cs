@@ -14,6 +14,7 @@ namespace ScriptBuilderUtil.Models {
             Build,
             Light,
             Hard,
+            Rebuild,
         }
 
         public static class CONST {
@@ -128,6 +129,12 @@ namespace ScriptBuilderUtil.Models {
         }
 
         #endregion Properties
+
+        public void ResetTags() {
+            ScriptBeginningTag = CONST.SCRIPT_BEGINNING_TAG;
+            ScriptEndingTag = CONST.SCRIPT_ENDING_TAG;
+            InjectionTag = CONST.INJECTION_TAG;
+        }
 
         /// <summary> 
         /// This constructor required for deserialization

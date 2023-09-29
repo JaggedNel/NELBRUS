@@ -79,6 +79,15 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string ButtonReset {
+            get {
+                return ResourceManager.GetString("ButtonReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string ButtonSave {
@@ -117,9 +126,9 @@ namespace ScriptBuilderUtil.Properties {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        public static string CompressinDescriptionMaximum {
+        public static string CompressinDescriptionRebuild {
             get {
-                return ResourceManager.GetString("CompressinDescriptionMaximum", resourceCulture);
+                return ResourceManager.GetString("CompressinDescriptionRebuild", resourceCulture);
             }
         }
         
@@ -151,6 +160,44 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Addition file {0} not found..
+        /// </summary>
+        public static string ErrorBuildAdditionFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorBuildAdditionFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requested file in line {0} of {1} and specified in additions (2) not found..
+        /// </summary>
+        public static string ErrorBuildFileNotExists {
+            get {
+                return ResourceManager.GetString("ErrorBuildFileNotExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find file requested in line {0} of {1} in root or addition file directories: {2}.
+        /// </summary>
+        public static string ErrorBuildFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorBuildFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error of processing file {0}: {1}
+        ///Trace:
+        ///{2}.
+        /// </summary>
+        public static string ErrorIOException {
+            get {
+                return ResourceManager.GetString("ErrorIOException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string ErrorLabel {
@@ -178,6 +225,24 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The beggining tag of script {0} not found..
+        /// </summary>
+        public static string ErrorTagBeginning {
+            get {
+                return ResourceManager.GetString("ErrorTagBeginning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ending tag of script {0} not found..
+        /// </summary>
+        public static string ErrorTagEnding {
+            get {
+                return ResourceManager.GetString("ErrorTagEnding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected type of build..
         /// </summary>
         public static string ErrorUnexpectedComboBoxItem {
@@ -187,20 +252,23 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unhandled error [{0}] received.
+        ///In line {1} of {2}
+        ///Trace:
+        ///{3}.
+        /// </summary>
+        public static string ErrorUnhandledOnBuild {
+            get {
+                return ResourceManager.GetString("ErrorUnhandledOnBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Additional injections:.
         /// </summary>
         public static string LabelAdditionalInjections {
             get {
                 return ResourceManager.GetString("LabelAdditionalInjections", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add tags to result.
-        /// </summary>
-        public static string LabelAddTagsToResult {
-            get {
-                return ResourceManager.GetString("LabelAddTagsToResult", resourceCulture);
             }
         }
         

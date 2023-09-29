@@ -26,7 +26,9 @@ namespace ScriptBuilderUtil.GUI {
                 AdditionalInjectionsList,
                 CompressionList,
                 CompressionDescriptionField,
-                IncludeCommentsLabelCheck);
+                IncludeCommentsLabelCheck,
+                ResultLengthLabel
+                );
         }
 
         #region Events
@@ -57,6 +59,9 @@ namespace ScriptBuilderUtil.GUI {
         }
         private void ClearButton_Click(object sender, RoutedEventArgs e) {
             ViewModel.Instance.ClearResult();
+        }
+        private void ResetButton_Click(object sender, RoutedEventArgs e) {
+            ViewModel.Instance.ResetTags();
         }
 
         #endregion Events

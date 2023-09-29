@@ -123,6 +123,9 @@
   <data name="ButtonCopy" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
   <data name="ButtonSave" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -135,7 +138,7 @@
   <data name="CompressinDescriptionLight" xml:space="preserve">
     <value />
   </data>
-  <data name="CompressinDescriptionMaximum" xml:space="preserve">
+  <data name="CompressinDescriptionRebuild" xml:space="preserve">
     <value />
   </data>
   <data name="CompressionBuildItem" xml:space="preserve">
@@ -147,6 +150,20 @@
   <data name="CompressionLightItem" xml:space="preserve">
     <value>Light</value>
   </data>
+  <data name="ErrorBuildAdditionFileNotFound" xml:space="preserve">
+    <value>Addition file {0} not found.</value>
+  </data>
+  <data name="ErrorBuildFileNotExists" xml:space="preserve">
+    <value>Requested file in line {0} of {1} and specified in additions (2) not found.</value>
+  </data>
+  <data name="ErrorBuildFileNotFound" xml:space="preserve">
+    <value>Cannot find file requested in line {0} of {1} in root or addition file directories: {2}</value>
+  </data>
+  <data name="ErrorIOException" xml:space="preserve">
+    <value>Error of processing file {0}: {1}
+Trace:
+{2}</value>
+  </data>
   <data name="ErrorLabel" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -156,15 +173,23 @@
   <data name="ErrorSavingCaption" xml:space="preserve">
     <value>Error on saving settings</value>
   </data>
+  <data name="ErrorTagBeginning" xml:space="preserve">
+    <value>The beggining tag of script {0} not found.</value>
+  </data>
+  <data name="ErrorTagEnding" xml:space="preserve">
+    <value>The ending tag of script {0} not found.</value>
+  </data>
   <data name="ErrorUnexpectedComboBoxItem" xml:space="preserve">
     <value>Unexpected type of build.</value>
   </data>
+  <data name="ErrorUnhandledOnBuild" xml:space="preserve">
+    <value>Unhandled error [{0}] received.
+In line {1} of {2}
+Trace:
+{3}</value>
+  </data>
   <data name="LabelAdditionalInjections" xml:space="preserve">
     <value>Additional injections:</value>
-  </data>
-  <data name="LabelAddTagsToResult" xml:space="preserve">
-    <value>Add tags to result</value>
-    <comment>-</comment>
   </data>
   <data name="LabelCompression" xml:space="preserve">
     <value>Compression:</value>

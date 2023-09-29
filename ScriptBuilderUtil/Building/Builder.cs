@@ -9,40 +9,44 @@ using ScriptBuilderUtil.Models;
 namespace ScriptBuilderUtil.Building {
     public static class Builder {
 
-        public static string BuildScript(BuilderParamsModel param, out string error, out string[] errorArgs) {
+        /// <summary>
+        /// White space charecters
+        /// </summary>
+        readonly static char[] WSC = new char[] { ' ', '\t', '\n', '\r', '\0' };
+
+        public static string BuildScript(BuilderParamsModel args, out string error, out string[] errorArgs) {
             StringBuilder result = new StringBuilder();
-            List<FileInfo> injections = param.AdditionsCollection
+            List<FileInfo> injections = args.AdditionsCollection
+                .Where(m => m.Choosen)
                 .Select(m => new FileInfo(m.Path)).ToList();
+            error = null;
             errorArgs = null;
             
             // Process root file and injections
-            if (!BuildScriptFile(
-                new FileInfo(param.RootDirectoryPath), 0, param, injections, out result, out error
-                )) {
+            if (!BuildScriptFile(new FileInfo(args.RootDirectoryPath), 0, args, injections, ref result, out error, out errorArgs)) {
                 return null;
             }
 
-            if (injections.Any()) {
-                // Processing additions and return
-                List<string> errorList = new List<string>();
-                return string.Join("\n\n\n", GetScript(result),
-                    string.Join("\n\n\n", injections.Where(i => File.Exists(i.FullName)).Select(i => {
-                        StringBuilder res = new StringBuilder();
-                        string e;
-                        if (BuildScriptFile(i, 0, param, injections, out res, out e)) {
-                            return GetScript(res);
-                        } else {
-                            errorList.Add(e);
-                            return null;
-                        }
-                    }).Where(s => !string.IsNullOrWhiteSpace(s))));
-            } else {
-                return GetScript(result);
-            }
-        }
+            // Processing additions
+            foreach (var i in injections) {
+                if (!File.Exists(i.FullName)) {
+                    error = "ErrorBuildAdditionFileNotFound";
+                    errorArgs = new string[] { i.FullName };
+                    return null;
+                }
 
-        static string GetScript(StringBuilder script) {
-            return script.ToString().Replace("\n", "").Trim('\n', '\t');
+                result.Append("\n\n");
+                if (!BuildScriptFile(i, 0, args, injections, ref result, out error, out errorArgs)) {
+                    return null;
+                }
+            }
+
+            string res = result.ToString();
+            while (res.Contains("\r\n\r\n\r\n\r\n")) {
+                res = res.Replace("\r\n\r\n\r\n\r\n", "\r\n\r\n\r\n");
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -52,27 +56,24 @@ namespace ScriptBuilderUtil.Building {
         /// <param name="tab"> Accumulated tabulation </param>
         /// <param name="result"></param>
         /// <returns> True if build succesful </returns>
-        static bool BuildScriptFile(
-            FileInfo info, 
-            int tab, 
-            BuilderParamsModel param,
-            List<FileInfo> additions, 
-            out StringBuilder result,
-            out string error) {
+        static bool BuildScriptFile(FileInfo info, int tab, BuilderParamsModel args, List<FileInfo> additions,
+            ref StringBuilder result, out string error, out string[] errorArgs) {
             error = null;
-            result = new StringBuilder();
-            int lineNumber = 0;
+            errorArgs = null;
+            int lineNumber = -1;
             try {
                 using (var sr = new StreamReader(info.FullName)) {
                     int fileTab = 0;
                     string line; // Current string line
                     int index;
                     string temp;
+                    bool isRootCommentPossible = true;
+                    StringBuilder locRes = new StringBuilder();
 
                     // Gathering global indent by beginning tag place
                     while (!sr.EndOfStream) {
                         lineNumber++;
-                        if ((line = sr.ReadLine()).IndexOf(param.ScriptBeginningTag) >= 0) {
+                        if ((line = sr.ReadLine()).IndexOf(args.ScriptBeginningTag) >= 0) {
                             fileTab = GetIndent(line);
                             break;
                         }
@@ -80,77 +81,201 @@ namespace ScriptBuilderUtil.Building {
 
                     // If script beginning not found -> error
                     if (sr.EndOfStream) {
-                        error = $"The beggining mark of the script {info.Name} not found";
+                        error = "ErrorTagBeggining";
+                        errorArgs = new string[] { info.FullName };
                         return false;
                     }
 
-                    while (!sr.EndOfStream && !(line = sr.ReadLine()).Contains(param.ScriptEndingTag)) {
-                        if (line.Contains("ENDING")) {
-                            error = line;
-                            return false;
-                        }
+                    lineNumber++;
+                    bool isBigComment = false;
+                    if (args.Compression != (int)BuilderParamsModel.Compressions.Build) {
+                        fileTab = 0;
+                    }
+                    while (!sr.EndOfStream && !(line = sr.ReadLine()).Contains(args.ScriptEndingTag)) {
                         lineNumber++;
+
+                        if (line.TrimStart(WSC).StartsWith("#"))
+                            continue;
+
+                        if (isBigComment) {
+                            if ((index = line.IndexOf("*/")) < 0) {
+                                continue;
+                            } else {
+                                temp = line.Substring(index + 2);
+                                line = line.Remove(index = line.Length - line.TrimStart(WSC).Length, line.Length - temp.Length - index);
+                                if (string.IsNullOrWhiteSpace(line)) {
+                                    continue;
+                                }
+                            }
+                        }
+
                         if (string.IsNullOrWhiteSpace(line)) {
-                            // Write empty line
-                            result.AppendLine("");
+                            if (args.Compression <= (int)BuilderParamsModel.Compressions.Light) {
+                                // Write empty line
+                                result.AppendLine("");
+                            }
                         } else {
-                            if ((index = line.IndexOf(param.InjectionTag)) >= 0) {
+                            // Prepairing line
+                            if (args.Compression == (int)BuilderParamsModel.Compressions.Build) {
+                                int t = -1;
+                                while (line[++t] == '\t') { }
+                                if (t > 0) {
+                                    line = line.Substring(t).PadLeft(line.Length + t * 4);
+                                }
+                            } else {
+                                line = line.Trim(WSC);
+                            }
+
+                            // Processing line
+                            if ((index = line.IndexOf(args.InjectionTag)) >= 0) {
                                 // Injection
-                                temp = line.Substring(index + param.InjectionTag.Length + 1).Trim(' '); // File name
+                                temp = line.Substring(index + args.InjectionTag.Length + 1).Trim(' '); // File name
                                 FileInfo path;
                                 // Checking file in the current directory
                                 string meaningPath = $@"{info.Directory.FullName}\{temp}.cs";
                                 if (!File.Exists(meaningPath)) {
                                     // Checking file in additions directoryes
-                                    if ((path = additions.FirstOrDefault(i => i.Name == temp)) != default(FileInfo)) {
+                                    path = args.AdditionsCollection
+                                        .Select(m => new FileInfo(m.Path))
+                                        .FirstOrDefault(i => i.Name == temp);
+                                    if (path != default(FileInfo)) {
                                         if (File.Exists(path.FullName)) {
-                                            additions.Remove(path);
+                                            //additions.Remove(path);
                                         } else {
-                                            error = $"Directory not exists: {path.FullName}";
+                                            error = "ErrorBuildFileNotExists";
+                                            errorArgs = new string[] { lineNumber.ToString("N0"), info.FullName, path.FullName };
                                             return false;
                                         }
                                     } else {
-                                        error = $"Additions not contains path: {meaningPath}";
+                                        error = "ErrorBuildFileNotFound";
+                                        errorArgs = new string[] { lineNumber.ToString("N0"), info.FullName, meaningPath };
                                         return false;
                                     }
                                 } else {
                                     path = new FileInfo(meaningPath);
                                 }
 
-                                StringBuilder localRes;
-                                if (!BuildScriptFile(path, fileTab + tab, param, additions, out localRes, out error)) {
+                                if (!BuildScriptFile(path, fileTab + tab, args, additions, ref result, out error, out errorArgs)) {
                                     return false;
                                 }
-                                result.AppendLine(localRes.ToString());
                             } else {
                                 // Regular line
-                                if (line.Length > fileTab && string.IsNullOrWhiteSpace(line.Remove(fileTab))) {
-                                    // Tabulation is coorect
-                                    line = line.Substring(fileTab);
-                                    result.AppendLine(line.PadLeft(line.Length + tab));
+                                if (args.Compression == (int)BuilderParamsModel.Compressions.Build) {
+                                    // Bake tabulation
+                                    int i = 0;
+                                    while (i < fileTab && line[i] == ' ')
+                                        i++;
+                                    line = line.Substring(i);
+                                }
+
+                                // Clear comments
+                                if (!args.IncludeComments || args.Compression >= (int)BuilderParamsModel.Compressions.Hard) {
+                                    while (isBigComment && line.StartsWith("*/") || !isBigComment && line.StartsWith("/*")) {
+                                        isBigComment = !isBigComment;
+                                        line = line.Substring(2);
+                                    }
+                                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//") && (isBigComment && !line.Contains("*/") || !isBigComment))
+                                        continue;
+                                    locRes.Clear();
+                                    locRes.Append(line[0]);
+                                    if (line.Length > 1) {
+                                        bool isString = line.StartsWith("\"");
+                                        bool isChar = line.StartsWith("'");
+                                        for (int i = 1; i < line.Length; i++) {
+                                            if (!isBigComment) {
+                                                // Determine whether it is a string
+                                                if (line[i] == '"' && !isChar &&
+                                                    (isString && (i - line.Substring(0, i).TrimEnd('\\').Length % 2 == 0) || !isString)) {
+                                                    isString = !isString;
+                                                } else if (line[i] == '\'' && !isString &&
+                                                    (isChar && line.Length > i + 1 && line[i + 1] == '\'' || !isChar)) {
+                                                    isChar = !isChar;
+                                                } else
+                                                // Check if comment
+                                                if (line[i] == '/' && !isString && !isChar && line.Length > i + 1) {
+                                                    if (line[i + 1] == '/') {
+                                                        break;
+                                                    } else if (line[i + 1] == '*') {
+                                                        isBigComment = true;
+                                                        i++;
+                                                        continue;
+                                                    }
+                                                }
+                                                // Append code charrecter
+                                                locRes.Append(line[i]);
+                                            } else if (line[i] == '*' && line.Length > i + 1 && line[i + 1] == '/') {
+                                                isBigComment = false;
+                                                i++;
+                                            }
+                                        }
+                                    }
+                                    line = locRes.ToString();
+                                    if (string.IsNullOrWhiteSpace(line))
+                                        continue;
+                                    line = line.TrimEnd(WSC);
+                                } 
+                                
+                                // TODO Rebuild
+
+                                // Append line
+                                if (args.Compression < (int)BuilderParamsModel.Compressions.Hard) {
+                                    result.AppendLine(line);
                                 } else {
-                                    // Repair and append
-                                    result.AppendLine((line = line.TrimStart(' ')).PadLeft(line.Length + tab));
+                                    if (string.IsNullOrWhiteSpace(line))
+                                        continue;
+                                    locRes.Clear();
+                                    locRes.Append(line[0]);
+                                    // Hard compressinog
+                                    if (line.Length > 2) {
+                                        bool isString = line.StartsWith("\"");
+                                        for (int i = 1; i < line.Length; i++) {
+                                            if (line[i] == '"') {
+                                                if (line[i - 1] != '\\') {
+                                                    isString = !isString;
+                                                }
+                                                locRes.Append(line[i]);
+                                            } else if (isString || line[i] != ' ' || line[i] == ' ' &&
+                                                (char.IsLetterOrDigit(line[i - 1]) || line[i - 1] == '_') &&
+                                                (char.IsLetterOrDigit(line[i + 1]) || line[i + 1] == '_')) {
+                                                locRes.Append(line[i]);
+                                            }
+                                        }
+                                    }
+
+                                    // Appending
+                                    if (!string.IsNullOrWhiteSpace(line)) {
+                                        if (result.Length > 0 && (char.IsLetterOrDigit(result[result.Length - 1]) || result[result.Length - 1] == '_') &&
+                                            (char.IsLetterOrDigit(line[0]) || line[0] == '_')) {
+                                            result.Append(" " + line);
+                                        } else {
+                                            result.Append(line);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                     if (sr.EndOfStream) {
-                        error = $"Script ending mark in file {info.Name} not found. {lineNumber}";
+                        error = "ErrorTagEnding";
+                        errorArgs = new string[] { info.FullName };
                         return false;
                     }
                 }
             } catch (IOException e) {
-                error = $"Inner IOException: {e.Message}\n{e.InnerException}\n{e.StackTrace}";
+                error = "ErrorIOException";
+                errorArgs = new string[] { info.FullName, e.Message, e.StackTrace };
                 return false;
+
             } catch (Exception e) {
-                error = $"Inner Exception (line {lineNumber}): {e.Message}\n{e.InnerException}\n{e.StackTrace}";
+                error = "ErrorUnhandledOnBuild";
+                errorArgs = new string[] { e.Message, lineNumber.ToString("N0"), info.FullName, e.StackTrace };
                 return false;
             }
             return true;
         }
 
         static int GetIndent(string line) {
+            line = line.Replace("\t", "    ");
             for (int i = 0; i < line.Length; i++) {
                 if (line[i] != ' ')
                     return i;
