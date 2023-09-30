@@ -41,7 +41,7 @@ public partial class Program : MyGridProgram
         public void SetCmd(string n, Cmd c) { CmdR.Add(n, c); }
         /// <summary> Set collection of new console commands.</summary>
         /// <param name="c"> Collection </param>
-        public void SetCmd(Dictionary<string, Cmd> c) { foreach (var i in c) { CmdR.Add(i.Key, i.Value); } }
+        public void SetCmd(Dictionary<string, Cmd> c) { foreach (var i in c) CmdR.Add(i.Key, i.Value); }
 
         #endregion CommandsManagement
 
@@ -52,9 +52,9 @@ public partial class Program : MyGridProgram
             if (a.Count() == 0) {
                 r.Append("Available commands:");
                 foreach (var i in CmdR)
-                    r.Append($"\n{NLB.F.Brckt(i.Key)} - {i.Value.H}");
+                    r.Append($"\n[{i.Key}] - {i.Value.H}");
             } else
-                return CmdR.ContainsKey(a[0]) ? $"{NLB.F.Brckt(a[0])} - {CmdR[a[0]].H}\nDetails:\n{CmdR[a[0]].D}" : $"Command {NLB.F.Brckt(a[0])} not found. {CONST.mTUH}";
+                return CmdR.ContainsKey(a[0]) ? $"[{a[0]}] - {CmdR[a[0]].H}\nDetails:\n{CmdR[a[0]].D}" : $"Command [{a[0]}] not found. {CONST.mTUH}";
             return r.ToString();
         }
 

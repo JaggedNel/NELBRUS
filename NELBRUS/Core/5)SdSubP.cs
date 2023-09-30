@@ -51,15 +51,15 @@ public partial class Program : MyGridProgram {
         /// <summary> Action instance </summary>
         public class ActI {
             /// <summary> Action delegate </summary>
-            internal protected Act A;
+            public Act A;
             /// <summary> Start tick </summary>
-            internal protected uint ST;
+            public uint ST;
             /// <summary> Frequency </summary>
-            internal protected uint F;
+            public uint F;
             /// <summary> Placement reference </summary>
-            internal Dictionary<uint, Act> Ref = null;
+            public Dictionary<uint, Act> Ref = null;
 
-            internal ActI(Act a, uint t, uint f) { 
+            public ActI(Act a, uint t, uint f) { 
                 A = a;
                 ST = t;
                 F = f;

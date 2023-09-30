@@ -30,7 +30,7 @@ public partial class Program : MyGridProgram
         /// <summary> Run new subprogram </summary>
         /// <param name="id"> Identificator of new subprogram </param>
         /// <returns> Started subprogram </returns>
-        public virtual SdSubP Start(ushort id) { return null; }
+        public virtual SdSubP Start(ushort id) => null;
     }
 
     //======-SCRIPT ENDING-======

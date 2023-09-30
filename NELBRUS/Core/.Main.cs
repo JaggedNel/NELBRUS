@@ -17,6 +17,10 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using System.Text.RegularExpressions;
 using System.CodeDom;
 
+// Ingame compiler version: 2.9.0.63208
+// Ingame language version: C# 6
+// #error version
+
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
@@ -36,17 +40,14 @@ public partial class Program: MyGridProgram {
             );
     }
     /// <summary> Common SE method invoked on game world saving </summary>
-    void Save() {
-        // Do not put there anything else
-        OS.Save();
-    }
+    void Save() => OS.Save();
+    // Do not put there anything else
     /// <summary> Common SE method invoked on triggering programmable block </summary>
     /// <param name="arg"> Trigger argument </param>
     /// <param name="uT"> Type of trigger source </param>
-    void Main(string arg, UpdateType uT) {
-        // Do not put there anything else
-        OS.Main(arg, uT);
-    }
+    void Main(string arg, UpdateType uT) => OS.Main(arg, uT);
+    // Do not put there anything else
+
 
     #endregion Common
 
@@ -103,6 +104,7 @@ public partial class Program: MyGridProgram {
     /// #INSERT 4)InitSubP
     /// #INSERT 5)SdSubP
     /// #INSERT 6)SdSubPCmd
+    /// #INSERT 7)TypedValue
 
     #endregion GlobalProperties
 

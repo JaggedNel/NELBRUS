@@ -93,7 +93,7 @@ public partial class Program : MyGridProgram
         /// Do not use it for else.
         /// </summary>
         public void Save() {
-            EchoCtrl.CShow($"Saved at {F.Brckt(F.DT(DateTime.Now))}");
+            EchoCtrl.CShow($"Saved at [{F.DT(DateTime.Now)}]");
         }
         /// <summary> 
         /// This method used to process run of programmable block.
@@ -129,7 +129,7 @@ public partial class Program : MyGridProgram
             }
         }
         /// <summary> Nobody cant stop it :P </summary>
-        public override bool MayStop() { return false; }
+        public override bool MayStop() => false;
 
         #region SubprogramsManagement
 
@@ -164,8 +164,8 @@ public partial class Program : MyGridProgram
             }
             return false;
         }
-        public int GetCountISP() { return OS.InitSP.Count; }
-        public int GetCountRSP() { return OS.SP.Count; }
+        public int GetCountISP() => OS.InitSP.Count;
+        public int GetCountRSP() => OS.SP.Count;
 
         #endregion SubprogramsManagement
 
@@ -219,7 +219,7 @@ public partial class Program : MyGridProgram
         string CmdRun(List<string> a) {
             int i;
             if (a.Count() > 0 && int.TryParse(a[0], out i))
-                if (InitSP.Count > i)
+                if (InitSP.Count > i && i >= 0)
                     return OS.RSP(InitSP[i]) == null ? $"Attempt to run new subprogram [{InitSP[i].Name}] failed." : $"New subprogram [{InitSP[i].Name}] runned.";
                 else
                     return $"Initialized subprogram with ID [{i}] not exist. {CONST.mTUH}";

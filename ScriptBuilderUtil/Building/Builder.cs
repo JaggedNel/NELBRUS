@@ -105,7 +105,7 @@ namespace ScriptBuilderUtil.Building {
                                         break;
                                     }
                                 } else if (isComment) {
-                                    if (temp.StartsWith("//")) {
+                                    if (temp.StartsWith("//") && !temp.StartsWith("///")) {
                                         result.AppendLine(temp);
                                     } else {
                                         break;

@@ -50,9 +50,7 @@ public partial class Program : MyGridProgram
             UM(ref CV, Vrnts, ref i);
         }
         /// <summary> Get current indicator </summary>
-        public string Get() {
-            return Vrnts[CV];
-        }
+        public string Get() => Vrnts[CV];
 
         #region UpdateMethods
 
