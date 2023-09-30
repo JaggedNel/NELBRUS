@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNTimer iJNTimer = new JNTimer();
     class JNTimer: InitSubP {
         public JNTimer() : base("Timer", "Shows the elapsed time on \"LCD timer\" when using the command \"ss\".") { }
 
@@ -61,6 +60,7 @@ public partial class Program: MyGridProgram {
             #endregion Commands
         }
     }
+    JNTimer iJNTimer = new JNTimer();
 
     //======-SCRIPT ENDING-======
 }

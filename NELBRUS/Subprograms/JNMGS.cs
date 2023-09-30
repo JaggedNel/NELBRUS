@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNMGS iJNMGS = new JNMGS();
     /// <summary>
     /// Multigrid Suspension system
     /// Steam Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2232464611
@@ -146,6 +145,7 @@ public partial class Program: MyGridProgram {
             #endregion Commands
         }
     }
+    JNMGS iJNMGS = new JNMGS();
 
     //======-SCRIPT ENDING-======
 }

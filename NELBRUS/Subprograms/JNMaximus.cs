@@ -8,7 +8,6 @@ using VRageMath;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNMaximus iJNMaximus = new JNMaximus();
     class JNMaximus: InitSubP {
         public JNMaximus() : base("Maximus Event Controller") { }
 
@@ -560,6 +559,7 @@ public partial class Program: MyGridProgram {
             #endregion commands
         }
     }
+    JNMaximus iJNMaximus = new JNMaximus();
 
     //======-SCRIPT ENDING-======
 }

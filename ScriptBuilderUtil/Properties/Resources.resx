@@ -204,7 +204,7 @@ Trace:
     <value>Root file:</value>
   </data>
   <data name="LabelSaveFirstMainComment" xml:space="preserve">
-    <value>Save first root comment</value>
+    <value>Save first main comment</value>
   </data>
   <data name="MenuAboutProgram" xml:space="preserve">
     <value>About program</value>

@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNTicker iJNTicker = new JNTicker();
     class JNTicker: InitSubP {
         public JNTicker() : base("Ticker", "First subprogram for NELBRUS system. This subprogram takes LCD with name \"Ticker\" and show current tick on it.") { } // Used for initialisation of subprogram
 
@@ -55,6 +54,7 @@ public partial class Program: MyGridProgram {
             #endregion Commands
         }
     }
+    JNTicker iJNTicker = new JNTicker();
 
     //======-SCRIPT ENDING-======
 }

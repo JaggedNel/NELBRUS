@@ -25,7 +25,7 @@ namespace ScriptBuilderUtil.Models {
             public const bool INCLUDE_COMMENTS = true;
 
             public const string CS_FILE_FILTER = "C# files|*.cs|All files|*.*";
-            public const string TXT_FILE_FILTER = "Text files|*txt|All files|*.*";
+            public const string TXT_FILE_FILTER = "Text files|*.txt|All files|*.*";
         }
 
         #region Properties

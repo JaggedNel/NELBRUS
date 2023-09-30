@@ -63,6 +63,13 @@ namespace ScriptBuilderUtil.GUI {
         private void ResetButton_Click(object sender, RoutedEventArgs e) {
             ViewModel.Instance.ResetTags();
         }
+        private void IncludeCommentsLabelCheck_Checked(object sender, RoutedEventArgs e) {
+            IncludeFirstMainCommentCheck.IsEnabled = false;
+            IncludeFirstMainCommentCheck.IsChecked = true;
+        }
+        private void IncludeCommentsLabelCheck_Unchecked(object sender, RoutedEventArgs e) {
+            IncludeFirstMainCommentCheck.IsEnabled = true;
+        }
 
         #endregion Events
 

@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNKontur iJNKontur = new JNKontur();
     /// <summary>
     /// On-board control system for buggy Kontur
     /// Steam Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=1382409219
@@ -259,6 +258,7 @@ public partial class Program: MyGridProgram {
             #endregion Commands
         }
     }
+    JNKontur iJNKontur = new JNKontur();
 
     //======-SCRIPT ENDING-======
 }

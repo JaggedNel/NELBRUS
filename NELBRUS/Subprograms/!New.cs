@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNew iJNew = new JNew();
     class JNew: InitSubP {
         public JNew() : base("", new MyVersion(1, 0)) { }
 
@@ -39,6 +38,7 @@ public partial class Program: MyGridProgram {
             }
         }
     }
+    JNew iJNew = new JNew();
 
     //======-SCRIPT ENDING-======
 }

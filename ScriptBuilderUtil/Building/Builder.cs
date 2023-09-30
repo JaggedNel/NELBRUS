@@ -21,9 +21,10 @@ namespace ScriptBuilderUtil.Building {
                 .Select(m => new FileInfo(m.Path)).ToList();
             error = null;
             errorArgs = null;
-            
+            hardLineLength = 0;
+
             // Process root file and injections
-            if (!BuildScriptFile(new FileInfo(args.RootDirectoryPath), 0, args, injections, ref result, out error, out errorArgs)) {
+            if (!BuildScriptFile(new FileInfo(args.RootDirectoryPath), 0, args, injections, false, ref result, out error, out errorArgs)) {
                 return null;
             }
 
@@ -36,7 +37,7 @@ namespace ScriptBuilderUtil.Building {
                 }
 
                 result.Append("\n\n");
-                if (!BuildScriptFile(i, 0, args, injections, ref result, out error, out errorArgs)) {
+                if (!BuildScriptFile(i, 0, args, injections, false, ref result, out error, out errorArgs)) {
                     return null;
                 }
             }
@@ -49,6 +50,7 @@ namespace ScriptBuilderUtil.Building {
             return res;
         }
 
+        static int hardLineLength;
         /// <summary>
         /// Build the script from file
         /// </summary>
@@ -56,7 +58,7 @@ namespace ScriptBuilderUtil.Building {
         /// <param name="tab"> Accumulated tabulation </param>
         /// <param name="result"></param>
         /// <returns> True if build succesful </returns>
-        static bool BuildScriptFile(FileInfo info, int tab, BuilderParamsModel args, List<FileInfo> additions,
+        static bool BuildScriptFile(FileInfo info, int tab, BuilderParamsModel args, List<FileInfo> additions, bool isInjection,
             ref StringBuilder result, out string error, out string[] errorArgs) {
             error = null;
             errorArgs = null;
@@ -67,8 +69,8 @@ namespace ScriptBuilderUtil.Building {
                     string line; // Current string line
                     int index;
                     string temp;
-                    bool isRootCommentPossible = true;
                     StringBuilder locRes = new StringBuilder();
+                    lineNumber = 0;
 
                     // Gathering global indent by beginning tag place
                     while (!sr.EndOfStream) {
@@ -87,11 +89,62 @@ namespace ScriptBuilderUtil.Building {
                     }
 
                     lineNumber++;
+
                     bool isBigComment = false;
+                    // Check for root comment
+                    bool isComment = false;
+                    bool isSummaryComment = false;
+                    do {
+                        line = sr.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(line) && !(temp = line.Trim(WSC)).StartsWith("#")) {
+                            if (args.IncludeComments || !isInjection && args.IncludeFirstMainComment) {
+                                if (isSummaryComment) {
+                                    if (temp.StartsWith("///")) {
+                                        result.AppendLine(temp);
+                                    } else {
+                                        break;
+                                    }
+                                } else if (isComment) {
+                                    if (temp.StartsWith("//")) {
+                                        result.AppendLine(temp);
+                                    } else {
+                                        break;
+                                    }
+                                } else if (isBigComment) {
+                                    if (temp.EndsWith("*/")) {
+                                        line = sr.ReadLine();
+                                        break;
+                                    }
+                                } else {
+                                    if (temp.StartsWith("//")) {
+                                        if (temp.StartsWith("///")) {
+                                            isSummaryComment = true;
+                                        } else {
+                                            isComment = true;
+                                        }
+                                        result.AppendLine(temp);
+                                    } else if (temp.StartsWith("/*")) {
+                                        isBigComment = true;
+                                        result.AppendLine(temp);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    } while (!sr.EndOfStream);
+                    if (sr.EndOfStream) {
+                        error = "ErrorTagEnding";
+                        errorArgs = new string[] { info.FullName };
+                        return false;
+                    }
+
                     if (args.Compression != (int)BuilderParamsModel.Compressions.Build) {
                         fileTab = 0;
                     }
-                    while (!sr.EndOfStream && !(line = sr.ReadLine()).Contains(args.ScriptEndingTag)) {
+                    do {
                         lineNumber++;
 
                         if (line.TrimStart(WSC).StartsWith("#"))
@@ -155,7 +208,7 @@ namespace ScriptBuilderUtil.Building {
                                     path = new FileInfo(meaningPath);
                                 }
 
-                                if (!BuildScriptFile(path, fileTab + tab, args, additions, ref result, out error, out errorArgs)) {
+                                if (!BuildScriptFile(path, fileTab + tab, args, additions, true, ref result, out error, out errorArgs)) {
                                     return false;
                                 }
                             } else {
@@ -213,20 +266,22 @@ namespace ScriptBuilderUtil.Building {
                                     if (string.IsNullOrWhiteSpace(line))
                                         continue;
                                     line = line.TrimEnd(WSC);
-                                } 
-                                
+                                }
+
                                 // TODO Rebuild
 
                                 // Append line
                                 if (args.Compression < (int)BuilderParamsModel.Compressions.Hard) {
                                     result.AppendLine(line);
                                 } else {
+                                    // Hard compressinog
                                     if (string.IsNullOrWhiteSpace(line))
                                         continue;
                                     locRes.Clear();
                                     locRes.Append(line[0]);
-                                    // Hard compressinog
-                                    if (line.Length > 2) {
+                                    if (line.Length == 2) {
+                                        locRes.Append(line[1]);
+                                    } else if (line.Length > 1) {
                                         bool isString = line.StartsWith("\"");
                                         for (int i = 1; i < line.Length; i++) {
                                             if (line[i] == '"') {
@@ -241,20 +296,28 @@ namespace ScriptBuilderUtil.Building {
                                             }
                                         }
                                     }
+                                    line = locRes.ToString();
 
                                     // Appending
                                     if (!string.IsNullOrWhiteSpace(line)) {
-                                        if (result.Length > 0 && (char.IsLetterOrDigit(result[result.Length - 1]) || result[result.Length - 1] == '_') &&
-                                            (char.IsLetterOrDigit(line[0]) || line[0] == '_')) {
-                                            result.Append(" " + line);
+                                        if (hardLineLength >= 1000) {
+                                            hardLineLength = 0;
+                                            result.AppendLine(line);
                                         } else {
-                                            result.Append(line);
+                                            if (result.Length > 0 && (char.IsLetterOrDigit(result[result.Length - 1]) || result[result.Length - 1] == '_') &&
+                                                (char.IsLetterOrDigit(line[0]) || line[0] == '_')) {
+                                                result.Append(" " + line);
+                                                hardLineLength += line.Length + 1;
+                                            } else {
+                                                result.Append(line);
+                                                hardLineLength += line.Length;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
+                    } while (!sr.EndOfStream && !(line = sr.ReadLine()).Contains(args.ScriptEndingTag));
                     if (sr.EndOfStream) {
                         error = "ErrorTagEnding";
                         errorArgs = new string[] { info.FullName };

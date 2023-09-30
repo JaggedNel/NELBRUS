@@ -23,18 +23,18 @@ public partial class Program : MyGridProgram
         //======-SCRIPT BEGINNING-======
 
         /// <summary> Basic echo controller </summary>
-        public class EchoController : SdSubP
-        {
+        public class EchoController: SdSubP {
             /// <summary> Duration of message </summary>
-            public uint DT;
+            public uint DT = F.TTT(30);
             /// <summary> Refresh action </summary>
             protected ActI R;
 
             public EchoController() : base(1, "ECHO") {
-                R = AddAct(Refresh, 100);
+                SR();
             }
             public EchoController(string n, MyVersion v = null, string i = CONST.NA) : base(1, n, v, i) { }
 
+            void SR() => R = AddAct(Refresh, 100);
             /// <summary>
             /// Echo controller works with NELBRUS. 
             /// Do not stop it.
@@ -43,7 +43,11 @@ public partial class Program : MyGridProgram
             /// <summary> Refresh information at echo </summary>
             public virtual void Refresh() => OS.P.Echo("OS NELBRUS is working. Echo unconfigured.");
             /// <summary> Show custom info at echo </summary>
-            public virtual void CShow(string s) => OS.P.Echo(s);
+            public virtual void CShow(string s) {
+                OS.P.Echo(s);
+                RemAct(ref R);
+                R = AddAct(SR, 0, DT);
+            }
             /// <summary>
             /// Show custom info at echo
             /// </summary>

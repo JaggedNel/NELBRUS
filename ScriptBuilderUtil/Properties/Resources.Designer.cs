@@ -309,7 +309,7 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save first root comment.
+        ///   Looks up a localized string similar to Save first main comment.
         /// </summary>
         public static string LabelSaveFirstMainComment {
             get {

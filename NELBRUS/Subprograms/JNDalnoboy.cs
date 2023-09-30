@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    JNDalnoboy iJNDalnoboy = new JNDalnoboy();
     /// <summary>
     /// On-board system for smart rover Dalnoboy
     /// Steam Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2190992795
@@ -149,6 +148,7 @@ public partial class Program: MyGridProgram {
             }
         }
     }
+    JNDalnoboy iJNDalnoboy = new JNDalnoboy();
 
     //======-SCRIPT ENDING-======
 }
