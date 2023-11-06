@@ -22,6 +22,7 @@ namespace ScriptBuilderUtil.Models {
             public const string SCRIPT_BEGINNING_TAG = "//======-SCRIPT BEGINNING-======";
             public const string SCRIPT_ENDING_TAG = "//======-SCRIPT ENDING-======";
             public const string INJECTION_TAG = "#INSERT";
+            public const string ADDITIONS_TAG = "#ADDITIONS";
             public const bool INCLUDE_COMMENTS = true;
 
             public const string CS_FILE_FILTER = "C# files|*.cs|All files|*.*";
@@ -38,6 +39,7 @@ namespace ScriptBuilderUtil.Models {
                 ScriptBeginningTag = CONST.SCRIPT_BEGINNING_TAG,
                 ScriptEndingTag = CONST.SCRIPT_ENDING_TAG,
                 InjectionTag = CONST.INJECTION_TAG,
+                AdditionsTag = CONST.ADDITIONS_TAG,
                 IncludeComments = CONST.INCLUDE_COMMENTS,
                 AdditionsCollection = new ObservableCollection<SavedPathModel>(),
             };
@@ -76,6 +78,13 @@ namespace ScriptBuilderUtil.Models {
             set {
                 _injectionTag = value;
                 OnPropertyChanged("InjectionTag");
+            }
+        }
+        public string AdditionsTag {
+            get => _additionsTag;
+            set {
+                _additionsTag = value;
+                OnPropertyChanged("AdditionsTag");
             }
         }
         bool _addTagsToRes;
@@ -118,6 +127,7 @@ namespace ScriptBuilderUtil.Models {
                 OnPropertyChanged("ResultText");
             }
         }
+        string _additionsTag;
 
         ObservableCollection<SavedPathModel> _additionsCollection;
         public ObservableCollection<SavedPathModel> AdditionsCollection {
@@ -134,6 +144,7 @@ namespace ScriptBuilderUtil.Models {
             ScriptBeginningTag = CONST.SCRIPT_BEGINNING_TAG;
             ScriptEndingTag = CONST.SCRIPT_ENDING_TAG;
             InjectionTag = CONST.INJECTION_TAG;
+            AdditionsTag = CONST.ADDITIONS_TAG;
         }
 
         /// <summary> 
