@@ -26,7 +26,7 @@ public partial class Program: MyGridProgram {
     class JNSolarTracker: InitSubP {
         public JNSolarTracker() : base("Solar Tracking", new MyVersion(1, 0)) { }
 
-        public override SdSubP Start(ushort id) {
+        protected override SdSubP Init(ushort id) {
             return new TP(id, this);
         }
 
@@ -39,7 +39,7 @@ public partial class Program: MyGridProgram {
             List<SolarArray> SolarArrays = new List<SolarArray>();
             ActI BSA, MA;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
                 BSA = AddAct(BuildSolarArrays, 600);
                 MA = AddAct(Main, 120, 60 * 3);
             }

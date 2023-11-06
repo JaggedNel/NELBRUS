@@ -22,7 +22,7 @@ public partial class Program: MyGridProgram {
     class JNTimer: InitSubP {
         public JNTimer() : base("Timer", "Shows the elapsed time on \"LCD timer\" when using the command \"ss\".") { }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); }
+        protected override SdSubP Init(ushort id) { return new TP(id, this); }
 
         class TP: SdSubPCmd {
             IMyTextPanel LCD;
@@ -30,7 +30,7 @@ public partial class Program: MyGridProgram {
             bool s = false;
             ActI MA;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
                 if ((LCD = OS.P.GridTerminalSystem.GetBlockWithName("LCD Timer") as IMyTextPanel) == null) {
                     Terminate("\"LCD Timer\" not found.");
                     return;

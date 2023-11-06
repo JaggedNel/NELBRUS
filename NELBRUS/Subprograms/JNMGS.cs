@@ -29,7 +29,7 @@ public partial class Program: MyGridProgram {
         // by Whiplash141
         public JNMGS() : base("Multigrid Suspension", new MyVersion(1, 0), "Allows you to control wheels placed on any subgrid using regular movement keys.") { }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); }
+        protected override SdSubP Init(ushort id) { return new TP(id, this); }
 
         class TP: SdSubPCmd {
             string IgnoreNameTag = "Ignore";
@@ -45,7 +45,7 @@ public partial class Program: MyGridProgram {
 
             ActI GB, MA, GC;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
                 GB = AddAct(GetBlocks, 600, 30);
                 SetCmd(new Dictionary<string, Cmd>
                 {
@@ -113,30 +113,30 @@ public partial class Program: MyGridProgram {
             #region Commands
             string CmdINT(List<string> a) {
                 if (a.Count == 0)
-                    return $"Current ignore name tag is {NLB.F.Brckt(IgnoreNameTag)}";
+                    return $"Current ignore name tag is [{IgnoreNameTag}]";
                 else if (string.IsNullOrWhiteSpace(a[0]))
                     return CONST.mAE;
                 else
-                    return $"New ignore name tag is {NLB.F.Brckt(IgnoreNameTag = a[0])}";
+                    return $"New ignore name tag is [{IgnoreNameTag = a[0]}]";
             }
             string CmdBC(List<string> a) {
                 if (a.Count == 0)
-                    return $"Current breaking constant is {NLB.F.Brckt(brakingConstant.ToString())}";
+                    return $"Current breaking constant is [{brakingConstant}]";
                 else {
                     float t;
                     if (float.TryParse(a[0], out t))
-                        return $"New breaking constant is {NLB.F.Brckt((brakingConstant = t).ToString())}";
+                        return $"New breaking constant is [{brakingConstant = t}]";
                     else
                         return CONST.mAE;
                 }
             }
             string CmdDBOC(List<string> a) {
                 if (a.Count == 0)
-                    return $"Current detection blocks over connectors is {NLB.F.Brckt(detectBlocksOverConnectors.ToString())}";
+                    return $"Current detection blocks over connectors is [{detectBlocksOverConnectors}]";
                 else {
                     bool t;
                     if (bool.TryParse(a[0], out t))
-                        return $"New detection blocks over connectors is {NLB.F.Brckt((detectBlocksOverConnectors = t).ToString())}";
+                        return $"New detection blocks over connectors is [{detectBlocksOverConnectors = t}]";
                     else
                         return CONST.mAE;
                 }

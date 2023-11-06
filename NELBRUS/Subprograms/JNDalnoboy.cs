@@ -26,7 +26,7 @@ public partial class Program: MyGridProgram {
     class JNDalnoboy: InitSubP {
         public JNDalnoboy() : base("DALNOBOY on-board computer", new MyVersion(1, 0)) { }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); }
+        protected override SdSubP Init(ushort id) => new TP(id, this);
 
         public class TP: SdSubPCmd {
             IMyShipController Controller;
@@ -41,7 +41,7 @@ public partial class Program: MyGridProgram {
 
             ActI MA, GC, TS;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
                 OS.GTS.GetBlocksOfType(Controllers, x => x.CanControlShip);
                 RotorSusp = OS.GTS.GetBlockWithName("Suspension Rotor") as IMyMotorStator;
                 HingeNeck = OS.GTS.GetBlockWithName("Neck Hinge") as IMyMotorAdvancedStator;

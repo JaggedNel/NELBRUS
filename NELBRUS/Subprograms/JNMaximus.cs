@@ -11,7 +11,7 @@ public partial class Program: MyGridProgram {
     class JNMaximus: InitSubP {
         public JNMaximus() : base("Maximus Event Controller") { }
 
-        public override SdSubP Start(ushort id) { return TP.GetInstance(id, this); }
+        protected override SdSubP Init(ushort id) { return TP.GetInstance(id, this); }
 
         class TP: SdSubPCmd {
             static TP Instance;
@@ -389,7 +389,7 @@ public partial class Program: MyGridProgram {
             bool GravityDirectionNormal = true;
             ActI AChangeGravity;
 
-            TP(ushort id, SubP p) : base(id, p) {
+            TP(ushort id, InitSubP p) : base(id, p) {
                 State = States.Stopped;
 
                 OS.GTS.GetBlockGroupWithName("Точки возрождения")?.GetBlocksOfType(RespawnPoints, x => x.GetType().Name == "MySurvivalKit");
@@ -439,7 +439,7 @@ public partial class Program: MyGridProgram {
                     { "Check", new Cmd(CmdCheck, "Проверить количество игроков.")},
                 });
             }
-            public static TP GetInstance(ushort id, SubP p) {
+            public static TP GetInstance(ushort id, InitSubP p) {
                 return Instance ?? (Instance = new TP(id, p));
             }
 
