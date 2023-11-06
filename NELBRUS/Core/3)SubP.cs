@@ -25,9 +25,11 @@ public partial class Program : MyGridProgram
 
         public string Name { get; protected set; }
         public string Info { get; protected set; }
-        public readonly MyVersion V;
+        public readonly MyVersion? V;
 
-        public SubP(string name, MyVersion v = null, string info = CONST.NA) {
+        public MemReg Mem;
+
+        public SubP(string name, MyVersion? v = null, string info = CONST.NA) {
             Name = name;
             V = v;
             Info = info;

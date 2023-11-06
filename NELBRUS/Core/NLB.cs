@@ -56,7 +56,7 @@ public partial class Program : MyGridProgram
 
         #endregion Properties
 
-        public NLB() : base(0, "NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS") {
+        public NLB() : base(0, new InitSubP("NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS")) {
             Tick = 0;
             InitSP = new List<InitSubP>();
             SP = new Dictionary<ushort, SdSubP>() { { 0, this } };
@@ -143,8 +143,12 @@ public partial class Program : MyGridProgram
         /// <summary> Run new subprogram </summary>
         /// <returns> New started subprogram or null </returns>
         public SdSubP RSP(InitSubP p) {
+            if (SP.Any(a => a.Value.Base == p)) {
+                EchoCtrl.CShow(CONST.mSPAS, p.Name);
+                return null;
+            }
             while (SP.ContainsKey(K)) K++;
-            var t = p.Start(K);
+            var t = p.Run(K);
             if (t != null)
                 if (t.TerminateMsg == null) {
                     SP.Add(K++, t);
@@ -158,7 +162,7 @@ public partial class Program : MyGridProgram
         public bool SSP(SdSubP p) { 
             if ((TerminateMsg != null || p.MayStop()) && SP.ContainsKey(p.ID) && !SP2C.Contains(p.ID)) {
                 if (!string.IsNullOrEmpty(p.TerminateMsg))
-                    EchoCtrl.CShow(CONST.mSPTP, p.ID, p.Name, p.TerminateMsg);
+                    EchoCtrl.CShow(CONST.mSPTP, p.ID.Str(), p.Name, p.TerminateMsg);
                 SP2C.Add(p.ID);
                 return true;
             }
@@ -178,8 +182,8 @@ public partial class Program : MyGridProgram
         /// <returns> Answer of command executing </returns>
         public static string Cmd(Dictionary<string, Cmd> r, string n, List<string> a)
         {
-            Cmd c; // Tip: the ad can not be embedded in C# 6.0
-            return r.TryGetValue(n, out c) ? c.C(a) : CONST.cmdNF;
+            Cmd c;
+            return r.TryGetValue(n, out c) ? c.C(a) : string.Format(CONST.cmdNF, n);
         }
         /// <summary> Run single line console command </summary>
         /// <param name="s"> Single line console command </param>

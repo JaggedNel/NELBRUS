@@ -32,7 +32,7 @@ public partial class Program : MyGridProgram
             public EchoController() : base(1, "ECHO") {
                 SR();
             }
-            public EchoController(string n, MyVersion v = null, string i = CONST.NA) : base(1, n, v, i) { }
+            public EchoController(string n, MyVersion? v = null, string i = CONST.NA) : base(1, n, v, i) { }
 
             void SR() => R = AddAct(Refresh, 100);
             /// <summary>
@@ -48,12 +48,13 @@ public partial class Program : MyGridProgram
                 RemAct(ref R);
                 R = AddAct(SR, 0, DT);
             }
+            public void CShow(string s, params string[] p) => CShow(string.Format(s, p));
             /// <summary>
             /// Show custom info at echo
             /// </summary>
             /// <param name="s"> A composite format string </param>
             /// <param name="p"> An object array that contains zero or more objects to format </param>
-            public void CShow(string s, params object[] p) => CShow(String.Format(s, p));
+            public void CShow(string s, params IReadable[] p) => CShow(string.Format(s, p));
             /// <summary> Remove custom info in echo </summary>
             public virtual void CClr() => Refresh();
         }

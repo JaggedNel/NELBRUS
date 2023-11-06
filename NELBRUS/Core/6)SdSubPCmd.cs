@@ -26,12 +26,14 @@ public partial class Program : MyGridProgram
         /// <summary> Command registry </summary>
         public Dictionary<string, Cmd> CmdR { get; private set; }
 
-        public SdSubPCmd(ushort id, string name, MyVersion v = null, string info = CONST.NA) : base(id, name, v, info) {
-            CmdR = new Dictionary<string, Cmd> { { "help", new Cmd(CmdHelp, CONST.cmdH, CONST.cmdHd) } };
-        }
-        public SdSubPCmd(ushort id, string name, string info) : this(id, name, null, info) { }
+        //public SdSubPCmd(ushort id, string name, MyVersion? v = null, string info = CONST.NA) : base(id, name, v, info) {
+        //    CmdR = new Dictionary<string, Cmd> { { "help", new Cmd(CmdHelp, CONST.cmdH, CONST.cmdHd) } };
+        //}
+        //public SdSubPCmd(ushort id, string name, string info) : this(id, name, null, info) { }
+
+
         /// <summary>Used by NELBRUS in start method to run new subprogram.</summary>
-        public SdSubPCmd(ushort id, SubP p) : this(id, p.Name, p.V, p.Info) { }
+        public SdSubPCmd(ushort id, InitSubP p) : base(id, p) { }
 
         #region CommandsManagement
 
@@ -55,7 +57,7 @@ public partial class Program : MyGridProgram
                     r.Append($"\n[{i.Key}] - {i.Value.H}");
             } else
                 return CmdR.ContainsKey(a[0]) ? $"[{a[0]}] - {CmdR[a[0]].H}\nDetails:\n{CmdR[a[0]].D}" : $"Command [{a[0]}] not found. {CONST.mTUH}";
-            return r.ToString();
+            return r.Str();
         }
 
         #endregion Default commands

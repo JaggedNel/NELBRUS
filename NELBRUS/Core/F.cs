@@ -48,7 +48,7 @@ public partial class Program : MyGridProgram
             /// <param name="p"> Subprogram </param>
             /// <param name="i"> Get advanced information </param>
             public static string SPI(SubP p, bool i = false) {
-                var r = $"[{p.Name}]" + p.V == null ? $" v.{p.V}" : "";
+                var r = $"[{p.Name}]" + (p.V != null ? $" v.{p.V}" : "");
                 return i ? 
                     r + $"\n{p.Info}{(p is SdSubP ? $"\nWas launched at [{DT((p as SdSubP).ST)}].\nCommands support: {p is SdSubPCmd}." : "")}" : 
                     r;

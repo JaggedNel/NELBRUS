@@ -41,13 +41,10 @@ public partial class Program: MyGridProgram {
     }
     /// <summary> Common SE method invoked on game world saving </summary>
     void Save() => OS.Save();
-    // Do not put there anything else
     /// <summary> Common SE method invoked on triggering programmable block </summary>
     /// <param name="arg"> Trigger argument </param>
     /// <param name="uT"> Type of trigger source </param>
     void Main(string arg, UpdateType uT) => OS.Main(arg, uT);
-    // Do not put there anything else
-
 
     #endregion Common
 
@@ -63,10 +60,15 @@ public partial class Program: MyGridProgram {
         public const string mAE = "Argument exception. " + mTUH;
         /// <summary> Subprogram was termited message </summary>
         public const string mSPT = "Subprogram was forcibly closed.";
+        /// <summary> Subprogram already started </summary>
+        public const string mSPAS = "Subprogram '{0}' already started.";
         /// <summary> Subprogram terminated on starting </summary>
-        public const string mSPTS = "Subprogram {0} can not start by cause:\n{1}";
+        public const string mSPTS = "Subprogram '{0}' can not start by cause:\n{1}";
         /// <summary> Subprogram terminated me </summary>
         public const string mSPTP = "Subprogram #{0} '{1}' terminated by cause:\n{2}";
+
+        /// <summary> Base info for echo </summary>
+        public const string mEB = "\nIs worked {0}\nInitialized subprograms: {1}\nRunned subprograms: {2}";
 
         public const string cmdH = "View commands help.";
         public const string cmdHd = "/help - show available commands;\n/help <command> - show command information.";
@@ -113,6 +115,16 @@ public partial class Program: MyGridProgram {
     /// #INSERT Ind
 
     #endregion CoreZone
+
+    /// #ADDITIONS
+
+}
+
+/// <summary> Methods of code reduction </summary>
+static class E {
+    /// <summary> <see cref="object.ToString"/> </summary>
+    public static string Str(this object o) => o.ToString();
+    public static void AddRange<T>(this List<T> l, params T[] v) => l.AddRange(v);
 
     //======-SCRIPT ENDING-======
 }

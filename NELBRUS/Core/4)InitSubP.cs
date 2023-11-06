@@ -21,16 +21,22 @@ public partial class Program : MyGridProgram
     //======-SCRIPT BEGINNING-======
 
     /// <summary> Subprogram initilizer class base </summary>
-    abstract class InitSubP: SubP {
-        public InitSubP(string name, MyVersion v = null, string info = CONST.NA) : base(name, v, info) {
+    class InitSubP: SubP {
+        SdSubP I;
+
+        public InitSubP(string name, MyVersion? v = null, string info = CONST.NA) : base(name, v, info) {
             OS.ISP(this);
         }
         public InitSubP(string name, string info) : this(name, null, info) { }
 
-        /// <summary> Run new subprogram </summary>
+        /// <summary> Get subprogram </summary>
         /// <param name="id"> Identificator of new subprogram </param>
         /// <returns> Started subprogram </returns>
-        public virtual SdSubP Start(ushort id) => null;
+        public SdSubP Run(ushort id) => I ?? (I = Init(id));
+        /// <summary> Initiate new subprogram </summary>
+        /// <param name="id"> Identificator of new subprogram </param>
+        /// <returns> Started subprogram </returns>
+        protected virtual SdSubP Init(ushort id) => null;
     }
 
     //======-SCRIPT ENDING-======

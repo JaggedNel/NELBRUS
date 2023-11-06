@@ -28,6 +28,7 @@ public partial class Program : MyGridProgram {
         public readonly DateTime ST;
         /// <summary> Terminate message showed on stop unworkable subprogram. </summary>
         public string TerminateMsg { get; private set; }
+        public readonly InitSubP Base;
 
         /// <summary> Every tick actions </summary>
         Act EAct;
@@ -66,17 +67,16 @@ public partial class Program : MyGridProgram {
             }
         }
 
-        public SdSubP(ushort id, string name, MyVersion v = null, string info = CONST.NA) : base(name, v, info) {
+        public SdSubP(ushort id, InitSubP p) : base(p.Name, p.V, p.Info) {
             ID = id;
             ST = DateTime.Now;
             EAct = delegate { };
             Acts = new Dictionary<uint, Dictionary<uint, Act>>();
             DefA = new Dictionary<uint, Act>();
             TerminateMsg = null;
+            Base = p;
+            Mem = p.Mem;
         }
-        public SdSubP(ushort id, string name, string info) : this(id, name, null, info) { }
-        /// <summary> Used by NELBRUS in start to run new subprogram </summary>
-        public SdSubP(ushort id, SubP p) : this(id, p.Name, p.V, p.Info) { }
 
         #region ActionsManagent
 
@@ -84,7 +84,7 @@ public partial class Program : MyGridProgram {
         /// This method used by OS to process subprogram. 
         /// Do not use it for other. 
         /// </summary>
-        public void Process() {
+        public void Process() { // TODO private
             if (UN) UpdActions();
             var t = OS.Tick;
 
