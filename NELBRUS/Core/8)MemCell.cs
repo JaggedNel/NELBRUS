@@ -25,14 +25,19 @@ public partial class Program : MyGridProgram
     /// Memory register
     /// </summary>
     class MemReg {
+        public readonly string Name;
         public List<IMemCell> Reg = new List<IMemCell>();
 
+        public MemReg(string name = "Main") {
+            Name = name;
+        }
 
         public class MemCell<T>: IMemCell {
             /// <summary> Name </summary>
-            public readonly string N;
+            public string N { get; }
             /// <summary> Value </summary>
             public T V;
+            public string Value => V.Str();
 
             public MemCell(string name, T v) {
                 N = name;
@@ -43,6 +48,10 @@ public partial class Program : MyGridProgram
             //public static implicit operator MemCell<T>(T v) => new MemCell<T>(v);
         }
 
+        /// <summary> Initilize memory cell </summary>
+        /// <typeparam name="T"> Cell type </typeparam>
+        /// <param name="name"> Name of cell </param>
+        /// <param name="v"> Default value of cell </param>
         protected MemCell<T> GetMC<T>(string name, T v) {
             var c = new MemCell<T>(name, v);
             Reg.Add(c);
@@ -50,10 +59,10 @@ public partial class Program : MyGridProgram
         }
     }
 
-
-
     interface IMemCell {
-
+        /// <summary> Name </summary>
+        string N { get; }
+        string Value { get; }
     }
 
     //======-SCRIPT ENDING-======

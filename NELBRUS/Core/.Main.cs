@@ -107,6 +107,7 @@ public partial class Program: MyGridProgram {
     /// #INSERT 5)SdSubP
     /// #INSERT 6)SdSubPCmd
     /// #INSERT 7)TypedValue
+    /// #INSERT 8)MemCell
 
     #endregion GlobalProperties
 

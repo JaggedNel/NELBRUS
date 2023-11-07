@@ -49,6 +49,8 @@ public partial class Program : MyGridProgram
         Dictionary<ushort, SdSubP> SP;
         /// <summary> Started subprograms to close </summary>
         List<ushort> SP2C = new List<ushort>();
+        MyIni Memory = new MyIni();
+        bool MemOk;
 
 
         /// <summary>Echo controller.</summary>
@@ -82,8 +84,15 @@ public partial class Program : MyGridProgram
             });
             EchoCtrl = EC == null ? new EchoController() : EC;
             P.Runtime.UpdateFrequency = UpdateFrequency.Update1;
-
             SP.Add(1, EchoCtrl);
+
+            if (!(MemOk = Memory.TryParse(P.Storage))) {
+                EchoCtrl.CShow("Memory parsing error.");
+            } else {
+                /// TODO чтение из памяти
+                
+            }
+
             // Run all initialized subprograms
             foreach (var i in InitSP)
                 RSP(i);
@@ -93,7 +102,20 @@ public partial class Program : MyGridProgram
         /// Do not use it for else.
         /// </summary>
         public void Save() {
-            EchoCtrl.CShow($"Saved at [{F.DT(DateTime.Now)}]");
+            //EchoCtrl.CShow($"Saved at [{F.DT(DateTime.Now)}]");
+            if (!MemOk) return;
+
+            Memory.Clear();
+            foreach (var p in SP.Values) {
+                foreach (var r in p.Mems) {
+                    var t = $"{p.Name}¶{r.Name}";
+                    foreach (var c in r.Reg) {
+                        Memory.Set(t, c.N, c.Value);
+                    }
+                }
+            }
+
+            OS.P.Storage = Memory.Str();
         }
         /// <summary> 
         /// This method used to process run of programmable block.

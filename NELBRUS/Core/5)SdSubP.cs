@@ -30,6 +30,8 @@ public partial class Program : MyGridProgram {
         public string TerminateMsg { get; private set; }
         public readonly InitSubP Base;
 
+        public List<MemReg> Mems;
+
         /// <summary> Every tick actions </summary>
         Act EAct;
         /// <summary> 
@@ -75,7 +77,6 @@ public partial class Program : MyGridProgram {
             DefA = new Dictionary<uint, Act>();
             TerminateMsg = null;
             Base = p;
-            Mem = p.Mem;
         }
 
         #region ActionsManagent

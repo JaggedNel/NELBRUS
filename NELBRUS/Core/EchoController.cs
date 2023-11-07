@@ -29,10 +29,9 @@ public partial class Program : MyGridProgram
             /// <summary> Refresh action </summary>
             protected ActI R;
 
-            public EchoController() : base(1, "ECHO") {
+            public EchoController(string n = "ECHO", MyVersion? v = null, string i = CONST.NA) : base(1, new InitSubP(n, v, i)) {
                 SR();
             }
-            public EchoController(string n, MyVersion? v = null, string i = CONST.NA) : base(1, n, v, i) { }
 
             void SR() => R = AddAct(Refresh, 100);
             /// <summary>
