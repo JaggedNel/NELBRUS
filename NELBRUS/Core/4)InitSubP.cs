@@ -24,10 +24,11 @@ public partial class Program : MyGridProgram
     class InitSubP: SubP {
         SdSubP I;
 
-        public InitSubP(string name, MyVersion? v = null, string info = CONST.NA) : base(name, v, info) {
+        InitSubP(string n, string i, MyVersion v) : base(n, v, i) { }
+        public InitSubP(string name, MyVersion v = null, string info = CONST.NA) : base(name, v, info) {
             OS.ISP(this);
         }
-        public InitSubP(string name, string info) : this(name, null, info) { }
+        public InitSubP(string name, string info) : this(name, null, info: info) { }
 
         /// <summary> Get subprogram </summary>
         /// <param name="id"> Identificator of new subprogram </param>
@@ -37,6 +38,8 @@ public partial class Program : MyGridProgram
         /// <param name="id"> Identificator of new subprogram </param>
         /// <returns> Started subprogram </returns>
         protected virtual SdSubP Init(ushort id) => null;
+
+        public static InitSubP GetPlug(string name, MyVersion v = null, string info = CONST.NA) => new InitSubP(name, info, v);
     }
 
     //======-SCRIPT ENDING-======

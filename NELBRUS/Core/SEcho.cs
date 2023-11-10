@@ -32,7 +32,7 @@ public partial class Program : MyGridProgram
             public enum FN: byte { Base, Msg, T1, T2, T3 };
             string b;
 
-            public SEcho() : base("Standart echo controller") {
+            public SEcho() : base(InitSubP.GetPlug("Standart echo controller")) {
                 OInd = new Ind(Ind.UpdTurn,
                     "(._.)",
                     "   ( l: )",
@@ -50,7 +50,6 @@ public partial class Program : MyGridProgram
             }
 
             string B() => string.Format(b, OInd.Get(), OS.GetCountISP(), OS.GetCountRSP());
-
             public override void Refresh() {
                 var t = new StringBuilder();
 

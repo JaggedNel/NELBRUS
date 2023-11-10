@@ -50,15 +50,17 @@ public partial class Program : MyGridProgram
         /// <summary> Started subprograms to close </summary>
         List<ushort> SP2C = new List<ushort>();
         MyIni Memory = new MyIni();
-        bool MemOk;
+        bool MemOk = false;
 
+        public delegate void DMain(string arg, UpdateType uT);
+        public DMain Main;
 
         /// <summary>Echo controller.</summary>
         public EchoController EchoCtrl { get; private set; }
 
         #endregion Properties
 
-        public NLB() : base(0, new InitSubP("NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS")) {
+        public NLB() : base(0, InitSubP.GetPlug("NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS")) {
             Tick = 0;
             InitSP = new List<InitSubP>();
             SP = new Dictionary<ushort, SdSubP>() { { 0, this } };
@@ -74,6 +76,10 @@ public partial class Program : MyGridProgram
         public void Ready(Program p, EchoController EC = null) {
             P = p;
             GTS = P.GridTerminalSystem;
+            if (_debug)
+                Main = TryMain;
+            else
+                Main = DoMain;
             SetCmd(new Dictionary<string, Cmd>
             {
                 { "start", new Cmd(CmdRun, "Start initialized subprogram by id.", "/start <id> - Start new subprogram, check id by /isp.") },
@@ -103,7 +109,8 @@ public partial class Program : MyGridProgram
         /// </summary>
         public void Save() {
             //EchoCtrl.CShow($"Saved at [{F.DT(DateTime.Now)}]");
-            if (!MemOk) return;
+            //if (!MemOk) 
+                return;
 
             Memory.Clear();
             foreach (var p in SP.Values) {
@@ -117,12 +124,20 @@ public partial class Program : MyGridProgram
 
             OS.P.Storage = Memory.Str();
         }
+        void TryMain(string a, UpdateType uT) {
+            try {
+                DoMain(a, uT);
+            } catch (Exception e) {
+                OS.P.Me.CustomData = e.Message;
+                P.Runtime.UpdateFrequency = UpdateFrequency.None;
+            }
+        }
         /// <summary> 
         /// This method used to process run of programmable block.
         /// Do not use it for else.
         /// </summary>
         /// <param name="a"> If param is command, then it should start with '/' </param>
-        public void Main(string a, UpdateType uT) {
+        void DoMain(string a, UpdateType uT) {
             switch (uT) {
                 case UpdateType.Update1:
                     #region Update1

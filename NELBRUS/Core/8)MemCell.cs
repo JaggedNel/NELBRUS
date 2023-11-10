@@ -46,6 +46,7 @@ public partial class Program : MyGridProgram
 
             public static implicit operator T(MemCell<T> v) => v.V;
             //public static implicit operator MemCell<T>(T v) => new MemCell<T>(v);
+            public override string ToString() => Value;
         }
 
         /// <summary> Initilize memory cell </summary>

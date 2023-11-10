@@ -101,13 +101,14 @@ public partial class Program : MyGridProgram {
 
             // Do periodic actions
             if (Acts.ContainsKey(t)) {
-                foreach (var f in Acts[t].Keys) { // Iterate frequencies
+                for (var I = 0; I < Acts[t].Count; I++) { // Iterate frequencies
+                    var f = Acts[t].Keys.ElementAt(I);
                     Acts[t][f](); // Invoke
                     // Sustain processes
                     var T = t + f;
                     if (Acts.ContainsKey(T))
                         if (Acts[T].ContainsKey(f)) {
-                            foreach(var i in AD.Where(i => i.Ref == Acts[t] && i.F == f))
+                            foreach (var i in AD.Where(i => i.Ref == Acts[t] && i.F == f))
                                 i.Ref = Acts[T];
                             Acts[T][f] += Acts[t][f];
                         } else

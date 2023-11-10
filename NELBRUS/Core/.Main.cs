@@ -27,6 +27,7 @@ public partial class Program: MyGridProgram {
     #region CoreZone
     // Nelbrus OS v.0.6.0-[14.09.23]
 
+    static bool _debug = true;
     /// <summary> Operation System NELBRUS instance </summary>
     readonly static NLB OS = new NLB(); // Initializing OS
 
@@ -35,8 +36,8 @@ public partial class Program: MyGridProgram {
     /// <summary> Common SE script constructor </summary>
     Program() {
         // Do not put there anything else
-        OS.Ready(this, 
-            new NLB.SEcho() // Set your custom echo controller here
+        OS.Ready(this
+            , new NLB.SEcho() // Set your custom echo controller here
             );
     }
     /// <summary> Common SE method invoked on game world saving </summary>

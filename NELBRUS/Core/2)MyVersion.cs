@@ -24,7 +24,7 @@ public partial class Program : MyGridProgram
     /// Represents the version number of an item. 
     /// v.3.1-[15.09.2023] 
     /// </summary>
-    struct MyVersion {
+    class MyVersion {
         /// <summary> Version Generation (Major) </summary>
         public readonly byte G;
         /// <summary> Version Edition (Minor) </summary>
