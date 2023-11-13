@@ -25,47 +25,55 @@ public partial class Program: MyGridProgram {
         protected override SdSubP Init(ushort id) => new TP(id, this);
 
         class LocMem: MemReg {
-            public LocMem() {
+            public LocMem(SdSubP p) : base(p) {
                 CabinName = GetMC("CabinName", "Cockpit");
                 StopLampsGroupName = GetMC("StopLampsGroupName", "Lamps (red)");
             }
-
+            
             public MemCell<string> CabinName, StopLampsGroupName;
         }
 
-        class TP: SdSubP {
+        class TP: SdSubPCmd {
 
             ActI MA;
-            LocMem Mem = new LocMem();
+            LocMem Mem;
             ActI SLA;
 
             JNSController Cabin;
             List<IMyLightingBlock> StopLamps = new List<IMyLightingBlock>();
             bool IsStopLampsOn = false;
-            bool IsGasUp = false;
 
             public TP(ushort id, InitSubP p) : base(id, p) {
-                ///Mem = p.Mem as LocMem;
-                Cabin = new JNSController(Mem.CabinName);
-                OS.GTS.GetBlockGroupWithName(Mem.StopLampsGroupName)
-                    .GetBlocksOfType(StopLamps);
+                SetCmd(new Dictionary<string, Cmd>
+                {
+                    { "cabin", new Cmd(CmdCabin, "Change cabin name.") },
+                });
+
+                Mem = new LocMem(this);
 
                 SLA = AddAct(SignalStop);
             }
-
+            public override void Init() {
+                OS.P.Me.CustomData = $"Getting cabin {Mem.CabinName}\n" + OS.P.Me.CustomData;
+                Cabin = new JNSController(OS.GTS.GetBlockWithName(Mem.CabinName) as IMyShipController);
+                OS.GTS.GetBlockGroupWithName(Mem.StopLampsGroupName)
+                    .GetBlocksOfType(StopLamps);
+            }
             void SignalStop() {
-                if (IsGasUp = Cabin.Move.Z < 0) {
-                    if (IsStopLampsOn) {
-                        StopLamps.ForEach(l => l.Color = Color.Black);
-                        IsStopLampsOn = false;
-                    }
-                } else {
+                if (Cabin.Move.Z >= 0 || Cabin.Move.Y > 0 || Cabin.Controller.HandBrake) {
                     if (!IsStopLampsOn) {
                         StopLamps.ForEach(l => l.Color = Color.Red);
                         IsStopLampsOn = true;
                     }
+                } else {
+                    if (IsStopLampsOn) {
+                        StopLamps.ForEach(l => l.Color = Color.Black);
+                        IsStopLampsOn = false;
+                    }
                 }
             }
+
+            string CmdCabin(List<string> a) { OS.P.Me.CustomData = $"Setting cabin name {a[0]}\n" + OS.P.Me.CustomData; Mem.CabinName.V = a[0]; return a[0]; }
         }
     }
     JBolid iBolid = new JBolid();
@@ -92,15 +100,28 @@ public partial class Program: MyGridProgram {
             }
         }
         public bool IsControl => Controller.IsUnderControl;
+
         public Vector2 Slide => Controller.RotationIndicator;
+        // Q     => -?
+        // E     => +?
         public float Roll => Controller.RollIndicator;
+        // W     => -Z
+        // S     => +Z
+        // A     => -X
+        // D     => +X
+        // Space => +Y
+        // C     => -Y
         public Vector3 Move => Controller.MoveIndicator;
 
-        public JNSController(string name) {
-            Controller = OS.GTS.GetBlockWithName(name) as IMyShipController;
+        public JNSController(IMyShipController controller) {
+            if (controller == null) {
+                throw new Exception("Controller is null");
+            }
+            Controller = controller;
         }
 
-        #region Imputs detecting
+        #region Inputs detecting
+
         public void UpdSlide() {
             SB += Slide;
         }
@@ -128,9 +149,11 @@ public partial class Program: MyGridProgram {
             CM();
             return t;
         }
-        #endregion Imputs detecting
+
+        #endregion Inputs detecting
 
         #region Buffers clearing
+
         void CS() {
             SB = new Vector2();
         }
@@ -140,6 +163,7 @@ public partial class Program: MyGridProgram {
         void CM() {
             MB = new Vector3();
         }
+
         #endregion Buffers clearing
     }
 
@@ -154,6 +178,8 @@ public partial class Program: MyGridProgram {
 - гироскопы: 
  -- стабилизация в плоскости (roll pitch)
  -- поворот (yaw)
+- Крабик для питстопа
+- АБС?
 - активная настройка подвески
 - управление стиком
  */

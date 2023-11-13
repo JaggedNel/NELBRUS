@@ -49,13 +49,16 @@ public partial class Program : MyGridProgram
         Dictionary<ushort, SdSubP> SP;
         /// <summary> Started subprograms to close </summary>
         List<ushort> SP2C = new List<ushort>();
-        MyIni Memory = new MyIni();
-        bool MemOk = false;
+        /// <summary> Global memory </summary>
+        public MyIni GM = new MyIni();
+        bool MemOk = false,
+            SaveNeeded = false;
 
         public delegate void DMain(string arg, UpdateType uT);
         public DMain Main;
+        ActI SA;
 
-        /// <summary>Echo controller.</summary>
+        /// <summary> Echo controller </summary>
         public EchoController EchoCtrl { get; private set; }
 
         #endregion Properties
@@ -92,16 +95,32 @@ public partial class Program : MyGridProgram
             P.Runtime.UpdateFrequency = UpdateFrequency.Update1;
             SP.Add(1, EchoCtrl);
 
-            if (!(MemOk = Memory.TryParse(P.Storage))) {
+            //if (!(MemOk = Memory.TryParse(P.Storage))) {
+            //    EchoCtrl.CShow("Memory parsing error.");
+            //} else {
+            //    /// TODO чтение из памяти
+
+            //}
+
+            if (!(MemOk = GM.TryParse(P.Storage)))
                 EchoCtrl.CShow("Memory parsing error.");
-            } else {
-                /// TODO чтение из памяти
-                
-            }
 
             // Run all initialized subprograms
             foreach (var i in InitSP)
                 RSP(i);
+
+            if (MemOk) {
+                SA = AddAct(TrySave, 60);
+            }
+        }
+        public void WaitSave() {
+            SaveNeeded = true;
+        }
+        public void TrySave() {
+            if (SaveNeeded) {
+                SaveNeeded = false;
+                Save();
+            }
         }
         /// <summary> 
         /// This method used to process save of programmable block.
@@ -109,26 +128,25 @@ public partial class Program : MyGridProgram
         /// </summary>
         public void Save() {
             //EchoCtrl.CShow($"Saved at [{F.DT(DateTime.Now)}]");
-            //if (!MemOk) 
+            if (!MemOk)
                 return;
 
-            Memory.Clear();
+            var t = new StringBuilder();
             foreach (var p in SP.Values) {
-                foreach (var r in p.Mems) {
-                    var t = $"{p.Name}¶{r.Name}";
-                    foreach (var c in r.Reg) {
-                        Memory.Set(t, c.N, c.Value);
-                    }
+                foreach (var r in p.Regs) {
+                    t.AppendLine(r.Mem.Str());
                 }
             }
 
-            OS.P.Storage = Memory.Str();
+            OS.P.Storage = t.Str();
         }
         void TryMain(string a, UpdateType uT) {
             try {
                 DoMain(a, uT);
             } catch (Exception e) {
-                OS.P.Me.CustomData = e.Message;
+                var t = $"ERROR {DateTime.Now}: {e.Message}";
+                OS.P.Echo(t);
+                OS.P.Me.CustomData = $"{t}\n({e.Source} - {e.InnerException?.Message})\nTrace:\n{e.StackTrace}\n\n" + OS.P.Me.CustomData;
                 P.Runtime.UpdateFrequency = UpdateFrequency.None;
             }
         }
@@ -189,6 +207,11 @@ public partial class Program : MyGridProgram
             if (t != null)
                 if (t.TerminateMsg == null) {
                     SP.Add(K++, t);
+
+                    OS.P.Me.CustomData = $"Trying reset {p.Name} - {t.Regs.Where(r => r.RR).Count()}/{t.Regs.Count()}\n" + OS.P.Me.CustomData;
+                    foreach (var R in t.Regs.Where(r => r.RR))
+                        R.Reset();
+                    t.Init();
                     return t;
                 } else
                     EchoCtrl.CShow(CONST.mSPTS, t.Name, t.TerminateMsg);

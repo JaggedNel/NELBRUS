@@ -30,7 +30,8 @@ public partial class Program : MyGridProgram {
         public string TerminateMsg { get; private set; }
         public readonly InitSubP Base;
 
-        public List<MemReg> Mems;
+        /// <summary> Memory registers </summary>
+        public List<MemReg> Regs;
 
         /// <summary> Every tick actions </summary>
         Act EAct;
@@ -72,6 +73,7 @@ public partial class Program : MyGridProgram {
         public SdSubP(ushort id, InitSubP p) : base(p.Name, p.V, p.Info) {
             ID = id;
             ST = DateTime.Now;
+            Regs = new List<MemReg>();
             EAct = delegate { };
             Acts = new Dictionary<uint, Dictionary<uint, Act>>();
             DefA = new Dictionary<uint, Act>();
@@ -85,7 +87,7 @@ public partial class Program : MyGridProgram {
         /// This method used by OS to process subprogram. 
         /// Do not use it for other. 
         /// </summary>
-        public void Process() { // TODO private
+        public void Process() { // TODO private ?
             if (UN) UpdActions();
             var t = OS.Tick;
 
@@ -200,8 +202,10 @@ public partial class Program : MyGridProgram {
 
         #endregion ActionsManagent
 
+        /// <summary> Setup actions after start </summary>
+        public virtual void Init() { }
         /// <summary> Stop started subprogram </summary>
-        public virtual void Stop() { OS.SSP(this); }
+        public virtual void Stop() { Base.Stop(); }
         /// <summary> 
         /// Returns true to let OS stop this subprogram.
         /// WARNING: Do not forget stop child subprograms there.

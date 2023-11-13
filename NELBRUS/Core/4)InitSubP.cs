@@ -22,6 +22,7 @@ public partial class Program : MyGridProgram
 
     /// <summary> Subprogram initilizer class base </summary>
     class InitSubP: SubP {
+        /// <summary> Started subprogram instance </summary>
         SdSubP I;
 
         InitSubP(string n, string i, MyVersion v) : base(n, v, i) { }
@@ -34,6 +35,11 @@ public partial class Program : MyGridProgram
         /// <param name="id"> Identificator of new subprogram </param>
         /// <returns> Started subprogram </returns>
         public SdSubP Run(ushort id) => I ?? (I = Init(id));
+        /// <summary> Stop started subprogram </summary>
+        public void Stop() {
+            OS.SSP(I);
+            I = null;
+        }
         /// <summary> Initiate new subprogram </summary>
         /// <param name="id"> Identificator of new subprogram </param>
         /// <returns> Started subprogram </returns>
