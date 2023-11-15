@@ -26,7 +26,7 @@ public partial class Program: MyGridProgram {
     class JNKontur: InitSubP {
         public JNKontur() : base("Controller for KONTUR") { }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); }
+        protected override SdSubP Init(ushort id) { return new TP(id, this); }
 
         class TP: SdSubPCmd {
             bool loopturn;
@@ -53,7 +53,7 @@ public partial class Program: MyGridProgram {
 
             ActI MA;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
                 loopturn = false;
                 NormWhAng = 35;
                 Tangle = 0;

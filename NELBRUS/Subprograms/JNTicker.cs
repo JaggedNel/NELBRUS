@@ -20,37 +20,58 @@ public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
     class JNTicker: InitSubP {
-        public JNTicker() : base("Ticker", "First subprogram for NELBRUS system. This subprogram takes LCD with name \"Ticker\" and show current tick on it.") { } // Used for initialisation of subprogram
+        // Used for initialisation of subprogram
+        public JNTicker() : base("Ticker", "First subprogram for NELBRUS system. This subprogram takes LCD with name \"Ticker\" and show current tick on it.") {
+            Mem = new LocMem();
+        }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); }
+        protected override SdSubP Init(ushort id) => new TP(id, this);
+
+        class LocMem : MemReg {
+            public LocMem() {
+                 LCDname = GetMC("LCDame", "LCD Ticker");
+            }
+
+            public MemCell<string> LCDname;
+        }
 
         class TP /* This Program */ : SdSubPCmd {
-            IMyTextPanel LCD { get; }
+            IMyTextPanel LCD;
             ActI MA; // Show current tick on text panel
+            LocMem mem;
 
-            public TP(ushort id, SubP p) : base(id, p) {
-                if ((LCD = OS.P.GridTerminalSystem.GetBlockWithName("LCD") as IMyTextPanel) == null) {
-                    Terminate("\"LCD\" not found.");
-                    return;
-                }
-                MA = AddAct(Show, 20);
+            public TP(ushort id, InitSubP p) : base(id, p) {
+                mem = p.Mem as LocMem;
+                
                 SetCmd(new Dictionary<string, Cmd>
                 {
                     { "pause", new Cmd(CmdPause, "Pause show current tick.") },
                     { "play", new Cmd(CmdPlay, "Continue show current tick.") },
+                    { "cLCDn", new Cmd(CmdChangeLCDname, "Change LCD name.") },
                 });
             }
 
+            void Init() {
+                if ((LCD = OS.P.GridTerminalSystem.GetBlockWithName(mem.LCDname) as IMyTextPanel) == null)
+                    OS.ECtrl.CShow(LCDnotFound());
+                else
+                    MA = AddAct(Show, 20);
+            }
+
+            string LCDnotFound() {
+                return $"'LCD' [{mem.LCDname}] not found.";
+            }
+
             void Show() {
-                LCD.WriteText(OS.Tick.ToString());
-                //Act = ChaAct(Act, 50, false); // Example
+                LCD.WriteText(OS.Tick.Str());
             }
             void MePause() { RemAct(ref MA); }
             void MePlay() { if (MA == null) MA = AddAct(Show, 20); }
 
             #region Commands
-            string CmdPause(List<string> a) { MePause(); return null; }
-            string CmdPlay(List<string> a) { MePlay(); return null; }
+            string CmdPause(List<string> a) { MePause(); return "[ || ]"; }
+            string CmdPlay(List<string> a) { if (LCD != null) MePlay(); else return LCDnotFound(); return "[ > ]"; }
+            string CmdChangeLCDname(List<string> a) { mem.LCDname.V = a[0]; return ""; }
             #endregion Commands
         }
     }

@@ -24,58 +24,49 @@ public partial class Program : MyGridProgram
 
         /// <summary> Standart echo controller </summary>
         public class SEcho: EchoController {
-            protected Dictionary<FieldNames, List<object>> Fields;
+            /// <summary> Fields </summary>
+            protected Dictionary<FN, List<IReadable>> F;
             protected Ind OInd;
-            ActI[] C = new ActI[9];
-            /// <summary> Message feild types </summary>
-            public enum FieldNames : byte { Base, Msg, T1, T2, T3 };
+            protected ActI[] C;
+            /// <summary> Message feild type names </summary>
+            public enum FN: byte { Base, Msg, T1, T2, T3 };
+            string b;
 
-            public SEcho() : base("Standart echo controller") {
+            public SEcho() : base(InitSubP.GetPlug("Standart echo controller")) {
                 OInd = new Ind(Ind.UpdTurn,
                     "(._.)",
                     "   ( l: )",
                     "      (.–.)",
                     "         ( :l )",
                     "            (._.)");
-                Fields = new Dictionary<FieldNames, List<object>> {
-                    { FieldNames.Base, new List<object> { new List<object> {
-                        $"OS NELBRUS v.{(string)OS.V}\nIs worked ",  (Req)OInd.Get, "\nInitialized subprograms: ", (ReqI)OS.GetCountISP, "\nRunned subprograms: ", (ReqI)OS.GetCountRSP } }
-                    },
-                    { FieldNames.Msg, new List<object>() } // Custom information
+                b = OS.Name + " v." + OS.V + CONST.mEB;
+                C = new ActI[9];
+                F = new Dictionary<FN, List<IReadable>> {
+                    { FN.Base, new List<IReadable> { new TD<string>(B) } },
+                    { FN.Msg, new List<IReadable>() }
                 };
                 R = AddAct((Act)Refresh + OInd.Upd, 30);
-                DT = F.TTT(45);
+                DT = NLB.F.TTT(45);
             }
 
+            string B() => string.Format(b, OInd.Get(), OS.GetCountISP(), OS.GetCountRSP());
             public override void Refresh() {
                 var t = new StringBuilder();
-                foreach (var f in Fields.Values) {
-                    for (int i = 0; i < f.Count(); i++) {
-                        if (f[i] is List<object>)
-                            t.Append(Get(f[i] as List<object>));
-                        else
-                            t.Append(GetObj(f[i]));
-                        t.Append("\n");
-                    }
-                }
-                t.Append("\n\n\n\n\n\n\n");
-                OS.P.Echo(t.ToString());
-            }
-            StringBuilder Get(List<object> line) {
-                var s = new StringBuilder();
-                foreach (var l in line)
-                    s.Append(GetObj(l));
-                return s;
-            }
-            string GetObj(object o) {
-                return o is Req ? ((Req)o)() :
-                    o is ReqI ? ((ReqI)o)().ToString() :
-                    o.ToString();
+
+                foreach (var f in F.Values)
+                    for (int i = 0; i < f.Count(); i++)
+                        t.Append(f[i] + "\n");
+
+                OS.P.Echo(t.Append("\n\n\n\n\n\n\n").Str());
             }
 
             /// <summary> Show custom info at echo </summary>
             public override void CShow(string s) {
-                var l = Fields[FieldNames.Msg];
+                CShow(new TV<string>(s));
+            }
+            /// <summary> Show custom info at echo </summary>
+            public void CShow(IReadable s) {
+                var l = F[FN.Msg];
                 l.Insert(0, s);
                 if (l.Count > C.Count())
                     l.RemoveAt(l.Count - 1);
@@ -86,18 +77,17 @@ public partial class Program : MyGridProgram
             }
             /// <summary> Remove custom message after the time has elapsed </summary>
             void RemCM() {
-                var i = Fields[FieldNames.Msg].Count;
+                var i = F[FN.Msg].Count;
                 if (i > 0) {
-                    Fields[FieldNames.Msg].RemoveAt(i - 1);
+                    F[FN.Msg].RemoveAt(i - 1);
                     C[i - 1] = null;
                 }
             }
             /// <summary> Remove custom info in echo </summary>
             public override void CClr() {
-                for (int i = 0; i < C.Count() && C[i] != null; i++) {
+                for (int i = 0; i < C.Count() && C[i] != null; i++)
                     RemAct(ref C[i]);
-                }
-                Fields[FieldNames.Msg].Clear();
+                F[FN.Msg].Clear();
             }
         }
 

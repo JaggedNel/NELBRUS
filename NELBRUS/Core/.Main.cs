@@ -17,40 +17,40 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using System.Text.RegularExpressions;
 using System.CodeDom;
 
+// Ingame compiler version: 2.9.0.63208
+// Ingame language version: C# 6
+// #error version
+
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    #region CoreZone
+    #region Core zone
     // Nelbrus OS v.0.6.0-[14.09.23]
 
+    /// <summary> Use debug mode with errors hanling </summary>
+    static bool _d = true;
     /// <summary> Operation System NELBRUS instance </summary>
-    readonly static NLB OS = new NLB(); // Initializing OS
+    readonly static NLB OS = new NLB(); // Preinitializing OS
 
     #region Common
 
     /// <summary> Common SE script constructor </summary>
     Program() {
         // Do not put there anything else
-        OS.Ready(this, 
-            new NLB.SEcho() // Set your custom echo controller here
+        OS.Ready(this
+            , new NLB.SEcho() // Set your custom echo controller here
             );
     }
     /// <summary> Common SE method invoked on game world saving </summary>
-    void Save() {
-        // Do not put there anything else
-        OS.Save();
-    }
+    void Save() => OS.Save();
     /// <summary> Common SE method invoked on triggering programmable block </summary>
     /// <param name="arg"> Trigger argument </param>
     /// <param name="uT"> Type of trigger source </param>
-    void Main(string arg, UpdateType uT) {
-        // Do not put there anything else
-        OS.Main(arg, uT);
-    }
+    void Main(string arg, UpdateType uT) => OS.Main(arg, uT);
 
     #endregion Common
 
-    #region GlobalProperties
+    #region Global properties
 
     /// <summary> Global constants </summary>
     class CONST {
@@ -62,10 +62,15 @@ public partial class Program: MyGridProgram {
         public const string mAE = "Argument exception. " + mTUH;
         /// <summary> Subprogram was termited message </summary>
         public const string mSPT = "Subprogram was forcibly closed.";
+        /// <summary> Subprogram already started </summary>
+        public const string mSPAS = "Subprogram '{0}' already started.";
         /// <summary> Subprogram terminated on starting </summary>
-        public const string mSPTS = "Subprogram {0} can not start by cause:\n{1}";
+        public const string mSPTS = "Subprogram '{0}' can not start by cause:\n{1}";
         /// <summary> Subprogram terminated me </summary>
         public const string mSPTP = "Subprogram #{0} '{1}' terminated by cause:\n{2}";
+
+        /// <summary> Base info for echo </summary>
+        public const string mEB = "\nIs worked {0}\nInitialized subprograms: {1}\nRunned subprograms: {2}";
 
         public const string cmdH = "View commands help.";
         public const string cmdHd = "/help - show available commands;\n/help <command> - show command information.";
@@ -90,6 +95,7 @@ public partial class Program: MyGridProgram {
     /// <summary> Action </summary>
     delegate void Act();
     /// <summary> Request without arguments </summary>
+    /// <returns> Answer of the executed command </returns>
     delegate string Req();
     /// <summary> String request with string arguments used for commands </summary>
     /// <returns> Answer of the executed command </returns>
@@ -103,14 +109,32 @@ public partial class Program: MyGridProgram {
     /// #INSERT 4)InitSubP
     /// #INSERT 5)SdSubP
     /// #INSERT 6)SdSubPCmd
+    /// #INSERT 7)TypedValue
+    /// #INSERT 8)MemCell
 
-    #endregion GlobalProperties
+    #endregion Global properties
+
+    /// <summary> Log message into program block custom data </summary>
+    /// <param name="m"> Message </param>
+    public static void Log(string m) {
+        OS.Me.CustomData += NLB.F.NowDT + m + "\n";
+    }
 
     /// #INSERT NLB
 
     /// #INSERT Ind
 
-    #endregion CoreZone
+    #endregion Core zone
+
+    /// #ADDITIONS
+
+}
+
+/// <summary> Methods of code reduction </summary>
+static class E {
+    /// <summary> <see cref="object.ToString"/> </summary>
+    public static string Str(this object o) => o.ToString();
+    public static void AddRange<T>(this List<T> l, params T[] v) => l.AddRange(v); /// TODO где юзабельно?
 
     //======-SCRIPT ENDING-======
 }

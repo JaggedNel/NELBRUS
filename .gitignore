@@ -8,6 +8,7 @@
 /NELBRUS/**/Test*.cs
 /NELBRUS/**/Explore*.cs
 /ScriptBuilderUtil/ScriptBuilderKey.txt
+/ScriptTests/**/*
 
 # User-specific files
 *.rsuser

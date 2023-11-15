@@ -26,37 +26,44 @@ public partial class Program : MyGridProgram
 
         #region Properties
 
-        /// <summary> 
-        /// Reference to <see cref="Program">Program</see> class to get access to it`s functions. 
-        /// Example: OS.P.Me 
-        /// </summary>
+        /// <summary> Reference to <see cref="Program">Program</see> class to get access to it`s functions </summary>
         public Program P { get; private set; }
-        /// <summary>
-        /// Reference to Grid Terminal System of this Program to get access to it`s functions. 
-        /// Example: OS.GTS.GetBlockWithName()
-        /// </summary>
-        public IMyGridTerminalSystem GTS { get; private set; }
+        /// <summary> Reference to Grid Terminal System of this Program to get access to it`s functions </summary>
+        /// <example> OS.GTS.GetBlockWithName() </example>
+        public IMyGridTerminalSystem GTS => P.GridTerminalSystem;
+        /// <summary> Reference to currently runned programmable block </summary>
+        public IMyProgrammableBlock Me => P.Me;
         /// <summary> Internal time measurement unit </summary>
         public uint Tick { get; private set; }
         /// <summary> ID for new subprogram to start </summary>
         ushort K;
         /// <summary> Initialised subprograms </summary>
         List<InitSubP> InitSP;
-        /// <summary>
-        /// Started subprograms.
-        /// Mean [id, subprogram].
-        /// </summary>
+        /// <summary> Started subprograms </summary>
+        /// <remarks> Mean [id, subprogram] </remarks>
         Dictionary<ushort, SdSubP> SP;
         /// <summary> Started subprograms to close </summary>
         List<ushort> SP2C = new List<ushort>();
+        /// <summary> Global memory space </summary>
+        public readonly MyIni GM = new MyIni();
+        /// <summary> Is memory have been readed </summary>
+        bool MOk = false;
+        /// <summary> Memory rewrite needed </summary>
+        bool SN = false;
 
+        /// <summary> Main action kind </summary>
+        public delegate void DMain(string arg, UpdateType uT);
+        /// <summary> Main action </summary>
+        public DMain Main { get; private set; }
+        /// <summary> Saving action </summary>
+        ActI SA;
 
-        /// <summary>Echo controller.</summary>
-        public EchoController EchoCtrl { get; private set; }
+        /// <summary> Echo controller </summary>
+        public EchoController ECtrl { get; private set; }
 
         #endregion Properties
 
-        public NLB() : base(0, "NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS") {
+        public NLB() : base(0, InitSubP.GetPlug("NELBRUS", new MyVersion(0, 6, 0, new DateTime(2023, 09, 15)), "Your OS")) {
             Tick = 0;
             InitSP = new List<InitSubP>();
             SP = new Dictionary<ushort, SdSubP>() { { 0, this } };
@@ -65,13 +72,15 @@ public partial class Program : MyGridProgram
 
         #region Methods
 
-        /// <summary>
-        /// This method used to initialize OS. 
-        /// Do not use it for other.
-        /// </summary>
+        /// <summary> This method used to initialize OS </summary>
+        /// <remarks> Do not use it for other </remarks>
+        /// <example> OS.Ready(this, new NLB.SEcho()); </example>
         public void Ready(Program p, EchoController EC = null) {
             P = p;
-            GTS = P.GridTerminalSystem;
+            if (_d)
+                Main = TryMain;
+            else
+                Main = DoMain;
             SetCmd(new Dictionary<string, Cmd>
             {
                 { "start", new Cmd(CmdRun, "Start initialized subprogram by id.", "/start <id> - Start new subprogram, check id by /isp.") },
@@ -80,31 +89,69 @@ public partial class Program : MyGridProgram
                 { "isp", new Cmd(CmdISP, "View initilized subprograms information.", "/isp - View initilized subprograms;\n/isp <id> - View initilized subprogram information.") },
                 { "clr", new Cmd(CmdClearC, "Clearing the command interface.") },
             });
-            EchoCtrl = EC == null ? new EchoController() : EC;
+            ECtrl = EC == null ? new EchoController() : EC;
             P.Runtime.UpdateFrequency = UpdateFrequency.Update1;
+            SP.Add(1, ECtrl);
 
-            SP.Add(1, EchoCtrl);
+            if (!(MOk = GM.TryParse(P.Storage)))
+                ECtrl.CShow("Memory parsing error.");
+            //else {
+            //    /// TODO чтение из памяти
+
+            //}
+
             // Run all initialized subprograms
             foreach (var i in InitSP)
                 RSP(i);
+
+            if (MOk)
+                SA = AddAct(TrySave, 60);
         }
-        /// <summary> 
-        /// This method used to process save of programmable block.
-        /// Do not use it for else.
-        /// </summary>
+
+        /// <summary> Mark saving needed </summary>
+        public void ToSave() {
+            SN = true;
+        }
+        /// <summary> Execute saving if needed </summary>
+        public void TrySave() {
+            if (SN) 
+                Save();
+        }
+        /// <summary> This method used to process save event of programmable block </summary>
+        /// <remarks> Do not use it </remarks>
         public void Save() {
-            EchoCtrl.CShow($"Saved at {F.Brckt(F.DT(DateTime.Now))}");
+            SN = false;
+            if (!MOk)
+                return;
+
+            // Build subprogram memory dump
+            var t = new StringBuilder();
+            foreach (var p in SP.Values) {
+                foreach (var r in p.Regs) {
+                    t.AppendLine(r.Mem.Str());
+                }
+            }
+
+            OS.P.Storage = t.Str();
         }
-        /// <summary> 
-        /// This method used to process run of programmable block.
-        /// Do not use it for else.
-        /// </summary>
-        /// <param name="a"> If param is command, then it should start with '/' </param>
-        public void Main(string a, UpdateType uT) {
+        /// <summary> This Method used to process run of programmable block with handling errors </summary>
+        /// <remarks> Do not use it </remarks>
+        /// <param name="a"> Run argument. If argument is command, then it should start with '/' </param>
+        /// <param name="uT"> Type of trigger source </param>
+        void TryMain(string a, UpdateType uT) {
+            try {
+                DoMain(a, uT);
+            } catch (Exception e) {
+                Error(e);
+            }
+        }
+        /// <summary> This method used to process run of programmable block </summary>
+        /// <remarks> Do not use it </remarks>
+        /// <param name="a"> Run argument. If argument is command, then it should start with '/'. </param>
+        /// <param name="uT"> Type of trigger source </param>
+        void DoMain(string a, UpdateType uT) {
             switch (uT) {
                 case UpdateType.Update1:
-                    #region Update1
-
                     // Close marked subprograms
                     foreach (var i in SP2C)
                         SP.Remove(i);
@@ -114,76 +161,99 @@ public partial class Program : MyGridProgram
                     foreach (var p in SP.Values) p.Process();
 
                     Tick++;
-
-                    #endregion Update1
                     break;
                 case UpdateType.Update10:
+                case UpdateType.Update100:
                     P.Runtime.UpdateFrequency = UpdateFrequency.Update1;
                     break;
-                case UpdateType.Update100:
-                    goto case UpdateType.Update10;
                 default:
+                    // Processing command
                     if (a.StartsWith("/"))
-                        EchoCtrl.CShow($"> {Cmd(a.Substring(1), CmdR)}");
+                        ECtrl.CShow($"> {Cmd(a.Substring(1), CmdR)}");
                     break;
             }
         }
+        /// <summary> Log error and stop program block </summary>
+        /// <param name="e"> Handled error </param>
+        public void Error(Exception e) {
+            var t = $"ERROR {F.NowDT} - {e.GetType()}:  {e.Message}";
+            P.Echo(t);
+            Log($"{t}\n({e.Source} - {e.InnerException?.Message})\nTrace:\n{e.StackTrace}");
+            throw new Exception("NELBRUS handled exception! Check CustomData for info.");
+        }
         /// <summary> Nobody cant stop it :P </summary>
-        public override bool MayStop() { return false; }
+        public override bool MayStop() => false;
 
-        #region SubprogramsManagement
+        #region Subprograms management
 
-        /// <summary> 
-        /// Initialise new subprogram.
-        /// Do not use it.
-        /// </summary>
+        /// <summary> Initialise new subprogram </summary>
+        /// <remarks> Do not use it </remarks>
         public void ISP(InitSubP p) {
             InitSP.Add(p);
         }
         /// <summary> Run new subprogram </summary>
         /// <returns> New started subprogram or null </returns>
         public SdSubP RSP(InitSubP p) {
+            // Cancel if already started
+            if (SP.Any(a => a.Value.Base == p)) {
+                ECtrl.CShow(CONST.mSPAS, p.Name);
+                return null;
+            }
+            // Getting unic key
             while (SP.ContainsKey(K)) K++;
-            var t = p.Start(K);
-            if (t != null)
-                if (t.TerminateMsg == null) {
+            // Try start
+            var t = p.Run(K);
+            if (t != null) {
+                if (t.TMsg == null) {
+                    // Start completed
                     SP.Add(K++, t);
-                    return t;
-                } else
-                    EchoCtrl.CShow(CONST.mSPTS, t.Name, t.TerminateMsg);
+                    // Reading memory
+                    foreach (var R in t.Regs.Where(r => r.RR))
+                        R.Reset();
+                    // Initilize
+                    if (t.Init())
+                        return t;
+                    else
+                        SP.Remove(--K);
+                }
+                ECtrl.CShow(CONST.mSPTS, t.Name, t.TMsg);
+            }
             return null;
         }
         /// <summary> Stop subprogram </summary>
         /// <returns> True if subprogram successfully stopped </returns>
         public bool SSP(SdSubP p) { 
-            if ((TerminateMsg != null || p.MayStop()) && SP.ContainsKey(p.ID) && !SP2C.Contains(p.ID)) {
-                if (!string.IsNullOrEmpty(p.TerminateMsg))
-                    EchoCtrl.CShow(CONST.mSPTP, p.ID, p.Name, p.TerminateMsg);
+            if ((TMsg != null || p.MayStop()) && SP.ContainsKey(p.ID) && !SP2C.Contains(p.ID)) {
+                if (!string.IsNullOrEmpty(p.TMsg))
+                    ECtrl.CShow(CONST.mSPTP, p.ID.Str(), p.Name, p.TMsg);
                 SP2C.Add(p.ID);
                 return true;
             }
             return false;
         }
-        public int GetCountISP() { return OS.InitSP.Count; }
-        public int GetCountRSP() { return OS.SP.Count; }
+        /// <returns> Count of initilized subprograms </returns>
+        public int GetCountISP() => OS.InitSP.Count;
+        /// <returns> Count of started subprograms </returns>
+        public int GetCountRSP() => OS.SP.Count;
 
-        #endregion SubprogramsManagement
+        #endregion Subprograms management
 
-        #region CommandsManagement
+        #region Commands management
 
-        ///<summary> Run parsed console command </summary>
+        /// <summary> Run parsed console command </summary>
         /// <param name="r"> Command registry </param>
         /// <param name="n"> Command name </param>
         /// <param name="a"> Console command arguments </param>
         /// <returns> Answer of command executing </returns>
         public static string Cmd(Dictionary<string, Cmd> r, string n, List<string> a)
         {
-            Cmd c; // Tip: the ad can not be embedded in C# 6.0
-            return r.TryGetValue(n, out c) ? c.C(a) : CONST.cmdNF;
+            Cmd c;
+            return r.TryGetValue(n, out c) ? c.C(a) : string.Format(CONST.cmdNF, n);
         }
         /// <summary> Run single line console command </summary>
         /// <param name="s"> Single line console command </param>
         /// <param name="r"> Command registry </param>
+        /// <returns> Answer of command executing </returns>
         public static string Cmd(string s, Dictionary<string, Cmd> r)
         {
             string n, m;
@@ -212,14 +282,14 @@ public partial class Program : MyGridProgram
             a.RemoveAt(0);
         }
 
-        #endregion CommandsManagement
+        #endregion Commands management
 
         #region Commands
 
         string CmdRun(List<string> a) {
             int i;
             if (a.Count() > 0 && int.TryParse(a[0], out i))
-                if (InitSP.Count > i)
+                if (InitSP.Count > i && i >= 0)
                     return OS.RSP(InitSP[i]) == null ? $"Attempt to run new subprogram [{InitSP[i].Name}] failed." : $"New subprogram [{InitSP[i].Name}] runned.";
                 else
                     return $"Initialized subprogram with ID [{i}] not exist. {CONST.mTUH}";
@@ -270,7 +340,7 @@ public partial class Program : MyGridProgram
                 CONST.mAE;
         }
         string CmdClearC(List<string> a) { 
-            EchoCtrl.CClr();
+            ECtrl.CClr();
             return " ";
         }
 

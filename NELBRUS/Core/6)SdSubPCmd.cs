@@ -26,12 +26,11 @@ public partial class Program : MyGridProgram
         /// <summary> Command registry </summary>
         public Dictionary<string, Cmd> CmdR { get; private set; }
 
-        public SdSubPCmd(ushort id, string name, MyVersion v = null, string info = CONST.NA) : base(id, name, v, info) {
+        /// <summary> Used by NELBRUS in start method to run new subprogram </summary>
+        /// <remarks> Do not use it </remarks>
+        public SdSubPCmd(ushort id, InitSubP p) : base(id, p) {
             CmdR = new Dictionary<string, Cmd> { { "help", new Cmd(CmdHelp, CONST.cmdH, CONST.cmdHd) } };
         }
-        public SdSubPCmd(ushort id, string name, string info) : this(id, name, null, info) { }
-        /// <summary>Used by NELBRUS in start method to run new subprogram.</summary>
-        public SdSubPCmd(ushort id, SubP p) : this(id, p.Name, p.V, p.Info) { }
 
         #region CommandsManagement
 
@@ -41,7 +40,7 @@ public partial class Program : MyGridProgram
         public void SetCmd(string n, Cmd c) { CmdR.Add(n, c); }
         /// <summary> Set collection of new console commands.</summary>
         /// <param name="c"> Collection </param>
-        public void SetCmd(Dictionary<string, Cmd> c) { foreach (var i in c) { CmdR.Add(i.Key, i.Value); } }
+        public void SetCmd(Dictionary<string, Cmd> c) { foreach (var i in c) CmdR.Add(i.Key, i.Value); }
 
         #endregion CommandsManagement
 
@@ -52,10 +51,10 @@ public partial class Program : MyGridProgram
             if (a.Count() == 0) {
                 r.Append("Available commands:");
                 foreach (var i in CmdR)
-                    r.Append($"\n{NLB.F.Brckt(i.Key)} - {i.Value.H}");
+                    r.Append($"\n[{i.Key}] - {i.Value.H}");
             } else
-                return CmdR.ContainsKey(a[0]) ? $"{NLB.F.Brckt(a[0])} - {CmdR[a[0]].H}\nDetails:\n{CmdR[a[0]].D}" : $"Command {NLB.F.Brckt(a[0])} not found. {CONST.mTUH}";
-            return r.ToString();
+                return CmdR.ContainsKey(a[0]) ? $"[{a[0]}] - {CmdR[a[0]].H}\nDetails:\n{CmdR[a[0]].D}" : $"Command [{a[0]}] not found. {CONST.mTUH}";
+            return r.Str();
         }
 
         #endregion Default commands

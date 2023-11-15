@@ -13,33 +13,21 @@ namespace ScriptBuilderUtil.Building {
         /// White space charecters
         /// </summary>
         readonly static char[] WSC = new char[] { ' ', '\t', '\n', '\r', '\0' };
+        static bool additionsAllowed;
 
         public static string BuildScript(BuilderParamsModel args, out string error, out string[] errorArgs) {
             StringBuilder result = new StringBuilder();
-            List<FileInfo> injections = args.AdditionsCollection
+            List<FileInfo> additions = args.AdditionsCollection
                 .Where(m => m.Choosen)
                 .Select(m => new FileInfo(m.Path)).ToList();
             error = null;
             errorArgs = null;
             hardLineLength = 0;
+            additionsAllowed = true;
 
-            // Process root file and injections
-            if (!BuildScriptFile(new FileInfo(args.RootDirectoryPath), 0, args, injections, false, ref result, out error, out errorArgs)) {
+            // Process root file and additions
+            if (!BuildScriptFile(new FileInfo(args.RootDirectoryPath), 0, args, additions, false, ref result, out error, out errorArgs)) {
                 return null;
-            }
-
-            // Processing additions
-            foreach (var i in injections) {
-                if (!File.Exists(i.FullName)) {
-                    error = "ErrorBuildAdditionFileNotFound";
-                    errorArgs = new string[] { i.FullName };
-                    return null;
-                }
-
-                result.Append("\n\n");
-                if (!BuildScriptFile(i, 0, args, injections, false, ref result, out error, out errorArgs)) {
-                    return null;
-                }
             }
 
             string res = result.ToString();
@@ -105,7 +93,7 @@ namespace ScriptBuilderUtil.Building {
                                         break;
                                     }
                                 } else if (isComment) {
-                                    if (temp.StartsWith("//")) {
+                                    if (temp.StartsWith("//") && !temp.StartsWith("///")) {
                                         result.AppendLine(temp);
                                     } else {
                                         break;
@@ -180,7 +168,22 @@ namespace ScriptBuilderUtil.Building {
                             }
 
                             // Processing line
-                            if ((index = line.IndexOf(args.InjectionTag)) >= 0) {
+                            if ((index = line.IndexOf(args.AdditionsTag)) >= 0 && additionsAllowed) { // TODO
+                                // Processing additions
+                                foreach (var i in additions) {
+                                    if (!File.Exists(i.FullName)) {
+                                        error = "ErrorBuildAdditionFileNotFound";
+                                        errorArgs = new string[] { i.FullName };
+                                        return false;
+                                    }
+                                    additionsAllowed = false;
+                                    result.Append("\n\n");
+                                    if (!BuildScriptFile(i, 0, args, additions, false, ref result, out error, out errorArgs)) {
+                                        return false;
+                                    }
+                                }
+                            }
+                            else if ((index = line.IndexOf(args.InjectionTag)) >= 0) {
                                 // Injection
                                 temp = line.Substring(index + args.InjectionTag.Length + 1).Trim(' '); // File name
                                 FileInfo path;
@@ -211,7 +214,8 @@ namespace ScriptBuilderUtil.Building {
                                 if (!BuildScriptFile(path, fileTab + tab, args, additions, true, ref result, out error, out errorArgs)) {
                                     return false;
                                 }
-                            } else {
+                            } 
+                            else {
                                 // Regular line
                                 if (args.Compression == (int)BuilderParamsModel.Compressions.Build) {
                                     // Bake tabulation
@@ -290,8 +294,9 @@ namespace ScriptBuilderUtil.Building {
                                                 }
                                                 locRes.Append(line[i]);
                                             } else if (isString || line[i] != ' ' || line[i] == ' ' &&
-                                                (char.IsLetterOrDigit(line[i - 1]) || line[i - 1] == '_') &&
-                                                (char.IsLetterOrDigit(line[i + 1]) || line[i + 1] == '_')) {
+                                                ((char.IsLetterOrDigit(line[i - 1]) || line[i - 1] == '_') &&
+                                                (char.IsLetterOrDigit(line[i + 1]) || line[i + 1] == '_') ||
+                                                (line[i - 1] == '\'' && line[i + 1] == '\''))) {
                                                 locRes.Append(line[i]);
                                             }
                                         }

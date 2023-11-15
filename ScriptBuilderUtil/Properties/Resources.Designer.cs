@@ -372,6 +372,15 @@ namespace ScriptBuilderUtil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additions:.
+        /// </summary>
+        public static string TagAdditionsLabel {
+            get {
+                return ResourceManager.GetString("TagAdditionsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Injection tag:.
         /// </summary>
         public static string TagInjectionLabel {

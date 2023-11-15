@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +67,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\8%29MemCell.cs" />
+    <Compile Include="Core\7%29TypedValue.cs" />
     <Compile Include="Core\4%29InitSubP.cs" />
     <Compile Include="Core\1%29Cmd.cs" />
     <Compile Include="Core\F.cs" />
@@ -79,8 +82,11 @@
     <Compile Include="Core\NLB.cs" />
     <Compile Include="Core\.Main.cs" />
     <Compile Include="Core\!New.cs" />
+    <Compile Include="Explore\Explore - Copy.cs" />
     <Compile Include="Explore\Explore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subprograms\JNStorageUtil.cs" />
+    <Compile Include="Subprograms\JNBolid.cs" />
     <Compile Include="Subprograms\!New.cs" />
     <Compile Include="Subprograms\JNDalnoboy.cs" />
     <Compile Include="Subprograms\JNKontur.cs" />

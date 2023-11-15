@@ -22,13 +22,13 @@ public partial class Program: MyGridProgram {
     class JNew: InitSubP {
         public JNew() : base("", new MyVersion(1, 0)) { }
 
-        public override SdSubP Start(ushort id) { return new TP(id, this); } // return OS.CSP<TP>() ? null : new TP(id, this); 
+        protected override SdSubP Init(ushort id) => new TP(id, this);
 
         class TP: SdSubP {
 
             ActI MA;
 
-            public TP(ushort id, SubP p) : base(id, p) {
+            public TP(ushort id, InitSubP p) : base(id, p) {
 
                 MA = AddAct(Main, 1);
             }

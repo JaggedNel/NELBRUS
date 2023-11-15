@@ -29,16 +29,14 @@ public partial class Program : MyGridProgram
             /// <summary> Refresh action </summary>
             protected ActI R;
 
-            public EchoController() : base(1, "ECHO") {
+            public EchoController() : base(1, InitSubP.GetPlug("ECHO")) {
                 SR();
             }
-            public EchoController(string n, MyVersion v = null, string i = CONST.NA) : base(1, n, v, i) { }
+            public EchoController(InitSubP p) : base(1, p) { }
 
             void SR() => R = AddAct(Refresh, 100);
-            /// <summary>
-            /// Echo controller works with NELBRUS. 
-            /// Do not stop it.
-            /// </summary>
+            /// <summary> Echo controller works with NELBRUS </summary>
+            /// <remarks> Do not stop it </remarks>
             public override bool MayStop() => false;
             /// <summary> Refresh information at echo </summary>
             public virtual void Refresh() => OS.P.Echo("OS NELBRUS is working. Echo unconfigured.");
@@ -48,12 +46,11 @@ public partial class Program : MyGridProgram
                 RemAct(ref R);
                 R = AddAct(SR, 0, DT);
             }
-            /// <summary>
-            /// Show custom info at echo
-            /// </summary>
+            public void CShow(string s, params string[] p) => CShow(string.Format(s, p));
+            /// <summary> Show custom info at echo </summary>
             /// <param name="s"> A composite format string </param>
             /// <param name="p"> An object array that contains zero or more objects to format </param>
-            public void CShow(string s, params object[] p) => CShow(String.Format(s, p));
+            public void CShow(string s, params IReadable[] p) => CShow(string.Format(s, p));
             /// <summary> Remove custom info in echo </summary>
             public virtual void CClr() => Refresh();
         }

@@ -27,19 +27,19 @@ public partial class Program : MyGridProgram {
         /// <summary> Time when subprogram started </summary>
         public readonly DateTime ST;
         /// <summary> Terminate message showed on stop unworkable subprogram. </summary>
-        public string TerminateMsg { get; private set; }
+        public string TMsg { get; private set; }
+        public readonly InitSubP Base;
+
+        /// <summary> Memory registers </summary>
+        public List<MemReg> Regs;
 
         /// <summary> Every tick actions </summary>
         Act EAct;
-        /// <summary> 
-        /// Actions with frequency registry. 
-        /// Mean [tick, [frequency, actions]].
-        /// </summary>
+        /// <summary> Actions with frequency registry </summary>
+        /// <remarks> Mean [tick, [frequency, actions]] </remarks>
         Dictionary<uint, Dictionary<uint, Act>> Acts;
-        /// <summary> 
-        /// Deferred Actions registry. 
-        /// Mean [tick, actions].
-        /// </summary>
+        /// <summary> Deferred Actions registry </summary>
+        /// <remarks> Mean [tick, actions] </remarks>
         Dictionary<uint, Act> DefA;
         /// <summary> Actions directory </summary>
         List<ActI> AD = new List<ActI>(), // General
@@ -51,40 +51,39 @@ public partial class Program : MyGridProgram {
         /// <summary> Action instance </summary>
         public class ActI {
             /// <summary> Action delegate </summary>
-            internal protected Act A;
+            public Act A;
             /// <summary> Start tick </summary>
-            internal protected uint ST;
+            public uint ST;
             /// <summary> Frequency </summary>
-            internal protected uint F;
+            public uint F;
             /// <summary> Placement reference </summary>
-            internal Dictionary<uint, Act> Ref = null;
+            public Dictionary<uint, Act> Ref = null;
 
-            internal ActI(Act a, uint t, uint f) { 
+            public ActI(Act a, uint t, uint f) { 
                 A = a;
                 ST = t;
                 F = f;
             }
         }
 
-        public SdSubP(ushort id, string name, MyVersion v = null, string info = CONST.NA) : base(name, v, info) {
+        /// <summary> Used by NELBRUS in start method to run new subprogram </summary>
+        /// <remarks> Do not use it </remarks>
+        public SdSubP(ushort id, InitSubP p) : base(p.Name, p.V, p.Info) {
             ID = id;
             ST = DateTime.Now;
+            Regs = new List<MemReg>();
             EAct = delegate { };
             Acts = new Dictionary<uint, Dictionary<uint, Act>>();
             DefA = new Dictionary<uint, Act>();
-            TerminateMsg = null;
+            TMsg = null;
+            Base = p;
         }
-        public SdSubP(ushort id, string name, string info) : this(id, name, null, info) { }
-        /// <summary> Used by NELBRUS in start to run new subprogram </summary>
-        public SdSubP(ushort id, SubP p) : this(id, p.Name, p.V, p.Info) { }
 
         #region ActionsManagent
 
-        /// <summary> 
-        /// This method used by OS to process subprogram. 
-        /// Do not use it for other. 
-        /// </summary>
-        public void Process() {
+        /// <summary> This method used by OS to process subprogram </summary>
+        /// <remarks> Do not use it </remarks>
+        public void Process() { // TODO private ?
             if (UN) UpdActions();
             var t = OS.Tick;
 
@@ -100,13 +99,14 @@ public partial class Program : MyGridProgram {
 
             // Do periodic actions
             if (Acts.ContainsKey(t)) {
-                foreach (var f in Acts[t].Keys) { // Iterate frequencies
+                for (var I = 0; I < Acts[t].Count; I++) { // Iterate frequencies
+                    var f = Acts[t].Keys.ElementAt(I);
                     Acts[t][f](); // Invoke
                     // Sustain processes
                     var T = t + f;
                     if (Acts.ContainsKey(T))
                         if (Acts[T].ContainsKey(f)) {
-                            foreach(var i in AD.Where(i => i.Ref == Acts[t] && i.F == f))
+                            foreach (var i in AD.Where(i => i.Ref == Acts[t] && i.F == f))
                                 i.Ref = Acts[T];
                             Acts[T][f] += Acts[t][f];
                         } else
@@ -198,17 +198,18 @@ public partial class Program : MyGridProgram {
 
         #endregion ActionsManagent
 
+        /// <summary> Setup actions after start </summary>
+        /// <remarks> Do your initial actions with memory here but not in <see cref="SdSubP"/> constructors </remarks>
+        public virtual bool Init() => true;
         /// <summary> Stop started subprogram </summary>
-        public virtual void Stop() { OS.SSP(this); }
-        /// <summary> 
-        /// Returns true to let OS stop this subprogram.
-        /// WARNING: Do not forget stop child subprograms there.
-        /// </summary>
+        /// <remarks> Do not forget to invoke Base.Stop() </remarks>
+        public virtual void Stop() { Base.Stop(); }
+        /// <summary> Returns true to let OS stop this subprogram </summary>
         public virtual bool MayStop() => true;
         /// <summary> Stop subprogram immediately </summary>
         /// <param name="msg"> Message about termination reason </param>
         public void Terminate(string msg = "") {
-            TerminateMsg = string.IsNullOrEmpty(msg) ? CONST.mSPT : msg;
+            TMsg = string.IsNullOrEmpty(msg) ? CONST.mSPT : msg;
             Stop();
         }
     }

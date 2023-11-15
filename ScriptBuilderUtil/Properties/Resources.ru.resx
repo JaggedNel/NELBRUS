@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ButtonBuild" xml:space="preserve">
-    <value>Build</value>
+    <value>Построить</value>
   </data>
   <data name="ButtonCopy" xml:space="preserve">
-    <value>Copy</value>
+    <value>Скопировать</value>
   </data>
   <data name="ButtonReset" xml:space="preserve">
-    <value>Reset</value>
+    <value>Сбросить</value>
   </data>
   <data name="ButtonSave" xml:space="preserve">
-    <value>Save</value>
+    <value>Сохранить</value>
   </data>
   <data name="CompressinDescriptionBuild" xml:space="preserve">
     <value />
@@ -142,13 +142,13 @@
     <value />
   </data>
   <data name="CompressionBuildItem" xml:space="preserve">
-    <value>Only build</value>
+    <value>Только постройка</value>
   </data>
   <data name="CompressionHardItem" xml:space="preserve">
-    <value>Hard</value>
+    <value>Тяжёлое</value>
   </data>
   <data name="CompressionLightItem" xml:space="preserve">
-    <value>Light</value>
+    <value>Лёгкое</value>
   </data>
   <data name="ErrorBuildAdditionFileNotFound" xml:space="preserve">
     <value>Addition file {0} not found.</value>
@@ -189,51 +189,51 @@ Trace:
 {3}</value>
   </data>
   <data name="LabelAdditionalInjections" xml:space="preserve">
-    <value>Additional injections:</value>
+    <value>Добавочные инъекции:</value>
   </data>
   <data name="LabelCompression" xml:space="preserve">
-    <value>Compression:</value>
+    <value>Сжатие:</value>
   </data>
   <data name="LabelIncludeComments" xml:space="preserve">
-    <value>Include comments</value>
+    <value>Добавить комментарии</value>
   </data>
   <data name="LabelLength" xml:space="preserve">
-    <value>Length:</value>
+    <value>Длина</value>
   </data>
   <data name="LabelRootFile" xml:space="preserve">
-    <value>Root file:</value>
+    <value>Заглавный файл:</value>
   </data>
   <data name="LabelSaveFirstMainComment" xml:space="preserve">
-    <value>Save first main comment</value>
+    <value>Первый комментарий</value>
   </data>
   <data name="MenuAboutProgram" xml:space="preserve">
-    <value>About program</value>
+    <value>О программе</value>
   </data>
   <data name="MenuHelp" xml:space="preserve">
-    <value>Help</value>
+    <value>Помощь</value>
   </data>
   <data name="MenuInstructions" xml:space="preserve">
-    <value>Instructions</value>
+    <value>Инструкции</value>
   </data>
   <data name="MenuView" xml:space="preserve">
-    <value>View</value>
+    <value>Вид</value>
   </data>
   <data name="TabInjectionParameters" xml:space="preserve">
-    <value>Injection parameters</value>
+    <value>Параметры инъекций</value>
   </data>
   <data name="TabTagNavigation" xml:space="preserve">
-    <value>Navigation tags</value>
+    <value>Навигационные тэги</value>
   </data>
   <data name="TagAdditionsLabel" xml:space="preserve">
-    <value>Additions:</value>
+    <value>Добавочные инъекции:</value>
   </data>
   <data name="TagInjectionLabel" xml:space="preserve">
-    <value>Injection tag:</value>
+    <value>Инъекция:</value>
   </data>
   <data name="TagScriptBeginningLabel" xml:space="preserve">
-    <value>Script beginning:</value>
+    <value>Начало скрипта</value>
   </data>
   <data name="TagScriptEndingLabel" xml:space="preserve">
-    <value>Script ending:</value>
+    <value>Окончание скрипта</value>
   </data>
 </root>
