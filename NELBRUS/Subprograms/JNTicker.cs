@@ -53,7 +53,7 @@ public partial class Program: MyGridProgram {
 
             void Init() {
                 if ((LCD = OS.P.GridTerminalSystem.GetBlockWithName(mem.LCDname) as IMyTextPanel) == null)
-                    OS.EchoCtrl.CShow(LCDnotFound());
+                    OS.ECtrl.CShow(LCDnotFound());
                 else
                     MA = AddAct(Show, 20);
             }
