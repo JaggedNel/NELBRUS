@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NELBRUS", "NELBRUS\NELBRUS.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptBuilderUtil", "ScriptBuilderUtil\ScriptBuilderUtil.csproj", "{5741A96A-284A-4E38-8E03-4EC219C8DF27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptTests", "ScriptTests\ScriptTests.csproj", "{AFE0308F-F50D-4975-BC6A-857F0C30BDD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,9 @@ Global
 		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5741A96A-284A-4E38-8E03-4EC219C8DF27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE0308F-F50D-4975-BC6A-857F0C30BDD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE0308F-F50D-4975-BC6A-857F0C30BDD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE0308F-F50D-4975-BC6A-857F0C30BDD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
