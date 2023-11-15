@@ -39,7 +39,7 @@ public partial class Program: MyGridProgram {
             LocMem Mem;
             ActI SLA;
 
-            JNSController Cabin;
+            JNSCtrl Cabin;
             List<IMyLightingBlock> StopLamps = new List<IMyLightingBlock>();
             bool IsStopLampsOn = false;
 
@@ -53,11 +53,15 @@ public partial class Program: MyGridProgram {
 
                 SLA = AddAct(SignalStop);
             }
-            public override void Init() {
-                OS.P.Me.CustomData = $"Getting cabin {Mem.CabinName}\n" + OS.P.Me.CustomData;
-                Cabin = new JNSController(OS.GTS.GetBlockWithName(Mem.CabinName) as IMyShipController);
+            public override bool Init() {
+                Cabin = JNSCtrl.Init(Mem.CabinName);
                 OS.GTS.GetBlockGroupWithName(Mem.StopLampsGroupName)
                     .GetBlocksOfType(StopLamps);
+                if (Cabin == null || !StopLamps.Any()) {
+                    Terminate("Blocks initialize error.");
+                    return false;
+                }
+                return true;
             }
             void SignalStop() {
                 if (Cabin.Move.Z >= 0 || Cabin.Move.Y > 0 || Cabin.Controller.HandBrake) {
@@ -73,15 +77,13 @@ public partial class Program: MyGridProgram {
                 }
             }
 
-            string CmdCabin(List<string> a) { OS.P.Me.CustomData = $"Setting cabin name {a[0]}\n" + OS.P.Me.CustomData; Mem.CabinName.V = a[0]; return a[0]; }
+            string CmdCabin(List<string> a) => Mem.CabinName.V = a[0];
         }
     }
     JBolid iBolid = new JBolid();
 
-    /// <summary>
-    /// Ship controller
-    /// </summary>
-    class JNSController {
+    /// <summary> Ship controller </summary>
+    class JNSCtrl {
         /// <summary> Slide buffer </summary>
         Vector2 SB;
         /// <summary> Roll buffer </summary>
@@ -101,6 +103,8 @@ public partial class Program: MyGridProgram {
         }
         public bool IsControl => Controller.IsUnderControl;
 
+        // ⇓     => Y?
+        // ⇨     => X?
         public Vector2 Slide => Controller.RotationIndicator;
         // Q     => -?
         // E     => +?
@@ -113,12 +117,16 @@ public partial class Program: MyGridProgram {
         // C     => -Y
         public Vector3 Move => Controller.MoveIndicator;
 
-        public JNSController(IMyShipController controller) {
-            if (controller == null) {
-                throw new Exception("Controller is null");
-            }
-            Controller = controller;
+        JNSCtrl(IMyShipController c) {
+            Controller = c;
         }
+
+        /// <summary> Initialize new ship controller by block </summary>
+        /// <param name="c"> Ship controller </param>
+        public static JNSCtrl Init(IMyShipController c) => c == null ? null : new JNSCtrl(c);
+        /// <summary> Initialize new ship controller by block </summary>
+        /// <param name="n"> Name of ship controller block </param>
+        public static JNSCtrl Init(string n) => Init(OS.GTS.GetBlockWithName(n) as IMyShipController);
 
         #region Inputs detecting
 
@@ -171,10 +179,11 @@ public partial class Program: MyGridProgram {
 }
 
 /*
-- стоп-сигнал
+- стоп-сигнал +
 - таймер время
 - скоростное ограничение питзоны
-- поворот колес: про акерман или антиакерман?
+- поворот колес:
+ -- про акерман или антиакерман?
 - гироскопы: 
  -- стабилизация в плоскости (roll pitch)
  -- поворот (yaw)
