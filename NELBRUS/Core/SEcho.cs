@@ -64,6 +64,7 @@ public partial class Program : MyGridProgram
             public override void CShow(string s) {
                 CShow(new TV<string>(s));
             }
+            /// <summary> Show custom info at echo </summary>
             public void CShow(IReadable s) {
                 var l = F[FN.Msg];
                 l.Insert(0, s);

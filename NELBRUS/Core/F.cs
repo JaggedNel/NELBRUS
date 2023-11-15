@@ -35,6 +35,10 @@ public partial class Program : MyGridProgram
             /// <summary> Turn <see cref="DateTime">DateTime</see> into string date with short time in common format </summary>
             public static string DTS(DateTime dt) => dt.ToString(CONST.DT.EST);
 
+            static DateTime n => DateTime.Now;
+            /// <summary> Current date with time in common format </summary>
+            public static string NowDT => DT(n);
+
             /// <summary> Time to ticks </summary>
             /// <param name="s"> Seconds </param>
             /// <param name="m"> Minutes </param>

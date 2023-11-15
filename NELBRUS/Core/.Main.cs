@@ -24,12 +24,13 @@ using System.CodeDom;
 public partial class Program: MyGridProgram {
     //======-SCRIPT BEGINNING-======
 
-    #region CoreZone
+    #region Core zone
     // Nelbrus OS v.0.6.0-[14.09.23]
 
-    static bool _debug = true;
+    /// <summary> Use debug mode with errors hanling </summary>
+    static bool _d = true;
     /// <summary> Operation System NELBRUS instance </summary>
-    readonly static NLB OS = new NLB(); // Initializing OS
+    readonly static NLB OS = new NLB(); // Preinitializing OS
 
     #region Common
 
@@ -49,7 +50,7 @@ public partial class Program: MyGridProgram {
 
     #endregion Common
 
-    #region GlobalProperties
+    #region Global properties
 
     /// <summary> Global constants </summary>
     class CONST {
@@ -94,6 +95,7 @@ public partial class Program: MyGridProgram {
     /// <summary> Action </summary>
     delegate void Act();
     /// <summary> Request without arguments </summary>
+    /// <returns> Answer of the executed command </returns>
     delegate string Req();
     /// <summary> String request with string arguments used for commands </summary>
     /// <returns> Answer of the executed command </returns>
@@ -110,13 +112,19 @@ public partial class Program: MyGridProgram {
     /// #INSERT 7)TypedValue
     /// #INSERT 8)MemCell
 
-    #endregion GlobalProperties
+    #endregion Global properties
+
+    /// <summary> Log message into program block custom data </summary>
+    /// <param name="m"> Message </param>
+    public static void Log(string m) {
+        OS.Me.CustomData += NLB.F.NowDT + m + "\n";
+    }
 
     /// #INSERT NLB
 
     /// #INSERT Ind
 
-    #endregion CoreZone
+    #endregion Core zone
 
     /// #ADDITIONS
 
@@ -126,7 +134,7 @@ public partial class Program: MyGridProgram {
 static class E {
     /// <summary> <see cref="object.ToString"/> </summary>
     public static string Str(this object o) => o.ToString();
-    public static void AddRange<T>(this List<T> l, params T[] v) => l.AddRange(v);
+    public static void AddRange<T>(this List<T> l, params T[] v) => l.AddRange(v); /// TODO где юзабельно?
 
     //======-SCRIPT ENDING-======
 }

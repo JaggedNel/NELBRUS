@@ -20,10 +20,7 @@ public partial class Program : MyGridProgram
 {
     //======-SCRIPT BEGINNING-======
 
-    /// <summary> 
-    /// Represents the version number of an item. 
-    /// v.3.1-[15.09.2023] 
-    /// </summary>
+    /// <summary> Represents the version number of an item </summary>
     class MyVersion {
         /// <summary> Version Generation (Major) </summary>
         public readonly byte G;

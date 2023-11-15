@@ -26,13 +26,8 @@ public partial class Program : MyGridProgram
         /// <summary> Command registry </summary>
         public Dictionary<string, Cmd> CmdR { get; private set; }
 
-        //public SdSubPCmd(ushort id, string name, MyVersion v = null, string info = CONST.NA) : base(id, name, v, info) {
-        //    CmdR = new Dictionary<string, Cmd> { { "help", new Cmd(CmdHelp, CONST.cmdH, CONST.cmdHd) } };
-        //}
-        //public SdSubPCmd(ushort id, string name, string info) : this(id, name, null, info) { }
-
-
-        /// <summary>Used by NELBRUS in start method to run new subprogram.</summary>
+        /// <summary> Used by NELBRUS in start method to run new subprogram </summary>
+        /// <remarks> Do not use it </remarks>
         public SdSubPCmd(ushort id, InitSubP p) : base(id, p) {
             CmdR = new Dictionary<string, Cmd> { { "help", new Cmd(CmdHelp, CONST.cmdH, CONST.cmdHd) } };
         }

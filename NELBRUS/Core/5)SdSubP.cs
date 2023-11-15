@@ -27,7 +27,7 @@ public partial class Program : MyGridProgram {
         /// <summary> Time when subprogram started </summary>
         public readonly DateTime ST;
         /// <summary> Terminate message showed on stop unworkable subprogram. </summary>
-        public string TerminateMsg { get; private set; }
+        public string TMsg { get; private set; }
         public readonly InitSubP Base;
 
         /// <summary> Memory registers </summary>
@@ -35,15 +35,11 @@ public partial class Program : MyGridProgram {
 
         /// <summary> Every tick actions </summary>
         Act EAct;
-        /// <summary> 
-        /// Actions with frequency registry. 
-        /// Mean [tick, [frequency, actions]].
-        /// </summary>
+        /// <summary> Actions with frequency registry </summary>
+        /// <remarks> Mean [tick, [frequency, actions]] </remarks>
         Dictionary<uint, Dictionary<uint, Act>> Acts;
-        /// <summary> 
-        /// Deferred Actions registry. 
-        /// Mean [tick, actions].
-        /// </summary>
+        /// <summary> Deferred Actions registry </summary>
+        /// <remarks> Mean [tick, actions] </remarks>
         Dictionary<uint, Act> DefA;
         /// <summary> Actions directory </summary>
         List<ActI> AD = new List<ActI>(), // General
@@ -70,6 +66,8 @@ public partial class Program : MyGridProgram {
             }
         }
 
+        /// <summary> Used by NELBRUS in start method to run new subprogram </summary>
+        /// <remarks> Do not use it </remarks>
         public SdSubP(ushort id, InitSubP p) : base(p.Name, p.V, p.Info) {
             ID = id;
             ST = DateTime.Now;
@@ -77,16 +75,14 @@ public partial class Program : MyGridProgram {
             EAct = delegate { };
             Acts = new Dictionary<uint, Dictionary<uint, Act>>();
             DefA = new Dictionary<uint, Act>();
-            TerminateMsg = null;
+            TMsg = null;
             Base = p;
         }
 
         #region ActionsManagent
 
-        /// <summary> 
-        /// This method used by OS to process subprogram. 
-        /// Do not use it for other. 
-        /// </summary>
+        /// <summary> This method used by OS to process subprogram </summary>
+        /// <remarks> Do not use it </remarks>
         public void Process() { // TODO private ?
             if (UN) UpdActions();
             var t = OS.Tick;
@@ -203,18 +199,17 @@ public partial class Program : MyGridProgram {
         #endregion ActionsManagent
 
         /// <summary> Setup actions after start </summary>
-        public virtual void Init() { }
+        /// <remarks> Do your initial actions with memory here but not in <see cref="SdSubP"/> constructors </remarks>
+        public virtual bool Init() => true;
         /// <summary> Stop started subprogram </summary>
+        /// <remarks> Do not forget to invoke Base.Stop() </remarks>
         public virtual void Stop() { Base.Stop(); }
-        /// <summary> 
-        /// Returns true to let OS stop this subprogram.
-        /// WARNING: Do not forget stop child subprograms there.
-        /// </summary>
+        /// <summary> Returns true to let OS stop this subprogram </summary>
         public virtual bool MayStop() => true;
         /// <summary> Stop subprogram immediately </summary>
         /// <param name="msg"> Message about termination reason </param>
         public void Terminate(string msg = "") {
-            TerminateMsg = string.IsNullOrEmpty(msg) ? CONST.mSPT : msg;
+            TMsg = string.IsNullOrEmpty(msg) ? CONST.mSPT : msg;
             Stop();
         }
     }
